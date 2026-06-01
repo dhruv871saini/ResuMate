@@ -23,7 +23,7 @@ async function updateProfile(id, resume_data) {
   return result.rows[0];
 }
 
-export {
+export default {
   createProfile,
   updateProfile
 };

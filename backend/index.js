@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import pool from './config/postgre.js';
+import routes from './route/index.js';
 
 dotenv.config();
 
@@ -11,6 +12,8 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.json({ message: 'API Running' });
 });
+
+app.use('/',routes);
 
 // test DB connection
 app.get('/db', async (req, res) => {

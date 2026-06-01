@@ -4,7 +4,7 @@ async function initializeDatabase() {
   try {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
-        id UUID PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
@@ -17,7 +17,7 @@ async function initializeDatabase() {
 
     await pool.query(`
         CREATE TABLE IF NOT EXISTS profiles (
-        id UUID PRIMARY KEY,
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID UNIQUE REFERENCES users(id), 
         resume_data JSONB,
         created_at TIMESTAMP DEFAULT NOW(),

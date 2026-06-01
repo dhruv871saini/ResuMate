@@ -1,4 +1,5 @@
 import pool from '../config/postgre.js'
+
 async function findByEmail(email) {
   const result = await pool.query(
     'SELECT * FROM users WHERE email = $1',
@@ -33,17 +34,20 @@ async function updateUser(id, name, email, passwordHash) {
 }
 
 async function deleteUser(id) {
-  const result =await pool.query(
+  const result = await pool.query(
     `DELETE FROM users
-     WHERE id=$1
-     RETURNING id,name,email`,
-  )  
-  return result.rows[0]
+     WHERE id = $1
+     RETURNING id, name, email`,
+    [id]
+  );
+
+  return result.rows[0];
 }
 
 
-module.exports = {
+export default  {
   findByEmail,
   createUser,
-  updateUser
+  updateUser,
+  deleteUser
 };
