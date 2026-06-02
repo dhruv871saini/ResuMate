@@ -25,6 +25,22 @@ async function initializeDatabase() {
       );
     `);
     console.log(' Resumes table created successfully');
+
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXIST job_description(
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID UNIQUE REFERENCE users(id),
+      title VARCHAR(225) NOT NULL,
+      company_name VARCHAR(255) NOT NULL,
+      description TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW(), 
+      );`
+    )
+    console.log(' job_description table created successfully ')
+
+
+
   } catch (error) {
     console.error('✗ Error creating table:', error);
   } finally {

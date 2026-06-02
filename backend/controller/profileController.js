@@ -3,7 +3,7 @@ import profileModel from '../model/profile.Model.js'
 export const createProfile = async (req, res) => {
     try {
         const { resume_data } = req.body;
-        const userId = req.user.userId; // Get userId from authenticated user
+        const userId = req.user.userId; 
         const profile = await profileModel.createProfile(
             userId,
             resume_data

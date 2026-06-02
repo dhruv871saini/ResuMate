@@ -1,0 +1,38 @@
+import pool from "../config/postgre";
+
+async function createJob_desc(user_id, title, company_name, description) {
+    const result =await pool.query(
+        `INSERT INTO job_description (user_id, title, company_name, description)
+         VALUES ($1, $2, $3, $4)
+         RETURNING id, user_id, title, company_name, description`,
+         [user_id, title, company_name, description]
+        )
+        return result.rows[0];
+}
+
+async function updateJob_desc(id, title, company_name, description) {
+    const result = await pool.query(
+        `UPDATE job_description
+         SET title=$1, company_name=$2, description=$3
+         WHERE id=$4,
+         RETURNING id, user_id, title, company_name, description`,
+         [title, company_name, description, id ]
+    )
+    return result.rows[0];
+}
+
+async function  deleteJob_desc(id) {
+    const result = await pool.query(
+        `DELETE FROM job_description
+        WHERE id=$1
+        RETURNING id, title ,company_name `,
+        [id]
+    )
+    return result.rows[0];
+}
+
+export default {
+    createJob_desc,
+    updateJob_desc,
+    deleteJob_desc,
+}
