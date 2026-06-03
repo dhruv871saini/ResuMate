@@ -18,7 +18,7 @@ async function initializeDatabase() {
     await pool.query(`
         CREATE TABLE IF NOT EXISTS profiles (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        user_id UUID UNIQUE REFERENCES users(id), 
+        user_id UUID  REFERENCES users(id), 
         resume_data JSONB,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
@@ -28,15 +28,17 @@ async function initializeDatabase() {
 
 
     await pool.query(`
-      CREATE TABLE IF NOT EXIST job_description(
+      CREATE TABLE IF NOT EXISTS job_descriptions (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id UUID UNIQUE REFERENCE users(id),
-      title VARCHAR(225) NOT NULL,
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      title VARCHAR(255) NOT NULL,
       company_name VARCHAR(255) NOT NULL,
       description TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT NOW(), 
-      );`
-    )
+      extracted_data JSONB,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    );
+  `);
     console.log(' job_description table created successfully ')
 
 

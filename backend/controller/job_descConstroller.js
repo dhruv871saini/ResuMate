@@ -1,9 +1,10 @@
-import job_descriptionModel from "../model/job_description.Model";
+import job_descriptionModel from "../model/job_description.Model.js";
 
 export const  createDescription = async(req,res)=>{
     try {
+        console.log("create description")
         const {title, company_name, description} =req.body;
-        const userId = req.userId;
+        const userId = req.user.userId;
         if(!userId || !title || !company_name || !description){
             return res.status(400).json({message:"all field are required to full filled"})
         }
@@ -25,7 +26,7 @@ export const  createDescription = async(req,res)=>{
 export const updateDescription = async(req,res) =>{
     try {
         const {id, title, company_name, description} =req.body;
-        const userId = req.userId;
+        const userId = req.user.userId;
         const jd = await job_descriptionModel.updateJob_desc(
             id,
             title,
@@ -44,7 +45,7 @@ export const updateDescription = async(req,res) =>{
 
 export const deleteDescription=async(req,res)=>{
     try {
-        const {id} =req.param;
+        const {id} =req.params;
         const jd= await job_descriptionModel.deleteJob_desc(
         id
         )
