@@ -22,8 +22,17 @@ async function updateProfile(id, resume_data) {
 
   return result.rows[0];
 }
+async function getProfileById(id, userId) {
+  const result = await pool.query(
+    `SELECT * FROM profiles WHERE id = $1 AND user_id = $2`,
+    [id, userId]
+  );
+  return result.rows[0];
+}
+
 
 export default {
   createProfile,
-  updateProfile
+  updateProfile,
+  getProfileById
 };

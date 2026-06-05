@@ -42,6 +42,53 @@ async function initializeDatabase() {
     console.log(' job_description table created successfully ')
 
 
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS conversations (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      job_description_id UUID REFERENCES job_descriptions(id),
+      profile_id UUID REFERENCES profiles(id),
+      prompt TEXT NOT NULL,
+      response TEXT NOT NULL,
+      model_used VARCHAR(50) DEFAULT 'gemini-1.5-flash',
+      tokens_used INT,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
+    
+    CREATE INDEX IF NOT EXISTS idx_conversations_user_id ON conversations(user_id);
+    CREATE INDEX IF NOT EXISTS idx_conversations_created_at ON conversations(created_at);
+  `);
+  console.log('✓ Conversations table added');
+
+
+
+  await pool.query(`
+   CREATE TABLE IF NOT EXISTS analyses (
+      id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id           UUID REFERENCES users(id) ON DELETE CASCADE,
+      profile_id        UUID REFERENCES profiles(id) ON DELETE CASCADE,
+      job_desc_id       UUID REFERENCES job_descriptions(id) ON DELETE CASCADE,
+
+      jd_analysis       JSONB,
+      score             INTEGER,
+      match_data        JSONB,
+      optimized_content JSONB,
+
+      model_used        VARCHAR(50) DEFAULT 'gemini-1.5-flash',
+
+      created_at        TIMESTAMP DEFAULT NOW(),
+      updated_at        TIMESTAMP DEFAULT NOW(),
+
+      UNIQUE(profile_id, job_desc_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_analyses_user_id  ON analyses(user_id);
+    CREATE INDEX IF NOT EXISTS idx_analyses_profile_job  ON analyses(profile_id, job_desc_id);
+  `);
+  console.log('✓ analyses table created');
+
+
+
 
   } catch (error) {
     console.error('✗ Error creating table:', error);

@@ -31,8 +31,17 @@ async function  deleteJob_desc(id) {
     return result.rows[0];
 }
 
+async function getJobDescById(id, userId) {
+  const result = await pool.query(
+    `SELECT * FROM job_descriptions WHERE id = $1 AND user_id = $2`,
+    [id, userId]
+  );
+  return result.rows[0];
+}
+
 export default {
     createJob_desc,
     updateJob_desc,
     deleteJob_desc,
+    getJobDescById
 }
