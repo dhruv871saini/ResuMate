@@ -15,7 +15,6 @@ app.get('/', (req, res) => {
 
 app.use('/',routes);
 
-// test DB connection
 app.get('/db', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');

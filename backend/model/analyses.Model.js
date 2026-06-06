@@ -1,9 +1,6 @@
 import pool  from "../config/postgre.js";
 
 
-// ── STORE: upsert the analysis row ────────────────────────────
-// Called multiple times as checkpoints complete.
-// ON CONFLICT updates the row — never creates duplicates.
 async function saveAnalysis({
   userId,
   profileId,
@@ -29,32 +26,28 @@ async function saveAnalysis({
      RETURNING *`,
     [
       userId, profileId, jobDescId,
-      score        || null,
-      matchData        ? JSON.stringify(matchData)        : null,
-      jdAnalysis       ? JSON.stringify(jdAnalysis)       : null,
-      optimizedContent ? JSON.stringify(optimizedContent) : null,
+      score             || null,
+      matchData         ? JSON.stringify(matchData)         : null,
+      jdAnalysis        ? JSON.stringify(jdAnalysis)        : null,
+      optimizedContent  ? JSON.stringify(optimizedContent)  : null,
       modelUsed
     ]
   );
   return result.rows[0];
 }
- 
-// ── GET: one analysis by profile+job (checkpoint check) ───────
-// Used inside analyzeController to see what's already saved
+
 async function getAnalysis(profileId, jobDescId) {
   const result = await pool.query(
-    `SELECT * FROM analyses
-     WHERE profile_id = $1 AND job_desc_id = $2`,
+    `SELECT * FROM analyses WHERE profile_id = $1 AND job_desc_id = $2`,
     [profileId, jobDescId]
   );
   return result.rows[0] || null;
 }
- 
-// ── GET: all analyses for a user (dashboard / history list) ───
+
 async function getAnalysesByUser(userId) {
   const result = await pool.query(
     `SELECT
-       a.id, a.score, a.updated_at,
+       a.id, a.score, a.updated_at, a.created_at,
        a.match_data        IS NOT NULL AS has_score,
        a.optimized_content IS NOT NULL AS has_optimized,
        j.title, j.company_name,
@@ -67,10 +60,8 @@ async function getAnalysesByUser(userId) {
   );
   return result.rows;
 }
- 
-// ── GET: one full analysis by its ID ──────────────────────────
-// Used on the results detail page
-export async function getAnalysisById(id, userId) {
+
+async function getAnalysisById(id, userId) {
   const result = await pool.query(
     `SELECT a.*, j.title, j.company_name, j.description AS jd_text
      FROM analyses a
@@ -80,8 +71,7 @@ export async function getAnalysisById(id, userId) {
   );
   return result.rows[0] || null;
 }
- 
-// ── DELETE: remove one analysis ───────────────────────────────
+
 async function deleteAnalysis(id, userId) {
   const result = await pool.query(
     `DELETE FROM analyses WHERE id = $1 AND user_id = $2 RETURNING id`,
@@ -89,11 +79,11 @@ async function deleteAnalysis(id, userId) {
   );
   return result.rows[0] || null;
 }
- 
+
 export default {
   saveAnalysis,
   getAnalysis,
   getAnalysesByUser,
   getAnalysisById,
   deleteAnalysis
-}
+};
