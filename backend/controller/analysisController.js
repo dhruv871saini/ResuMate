@@ -5,22 +5,97 @@ import pool from '../config/postgre.js';
 
 const PARSE_JD_SYSTEM = `
 You are a job description analyzer for ATS optimization.
-Extract key data from the job description. Return ONLY valid JSON, no markdown.
-Schema: { "title": "", "company": "", "required_skills": [], "nice_to_have_skills": [], "ats_keywords": [], "responsibilities": [], "min_years_experience": null, "seniority": "", "tech_stack": [], "soft_skills": [] }
+Extract key data from the job description. Return ONLY valid JSON, no markdown, no explanation.
+Schema:
+{
+  "title": "",
+  "company": "",
+  "required_skills": [],
+  "nice_to_have_skills": [],
+  "ats_keywords": [],
+  "responsibilities": [],
+  "min_years_experience": null,
+  "seniority": "",
+  "tech_stack": [],
+  "soft_skills": []
+}
 `.trim();
 
 const MATCH_SCORE_SYSTEM = `
-You are an ATS expert. Compare the resume against the job description and score the match.
-Return ONLY valid JSON, no markdown.
-Schema: { "score": 0, "matched_skills": [], "missing_keywords": [], "strengths": [], "weaknesses": [], "suggestions": [{ "area": "", "tip": "" }] }
+You are a strict ATS scoring engine.
+
+SCORING RULES:
+- Score above 70 requires most required skills present (exact or similar)
+- Score above 85 requires ALL required skills present
+- Missing critical skills must significantly drop the score
+- Be honest and strict — do NOT inflate scores
+
+MATCHING RULES — categorize each required skill as:
+1. EXACT MATCH: skill explicitly present in resume
+2. PARTIAL MATCH: resume shows related knowledge implying the skill
+   Examples:
+   - Resume has "REST APIs" → partial for "RESTful APIs"
+   - Resume has "PostgreSQL" → partial for "SQL/databases"
+   - Resume has "Node.js + Express" → partial for "backend development"
+   - Resume has "API optimization" → partial for "caching mechanisms"
+3. MISSING: no evidence in resume at all
+
+SCORE CALCULATION:
+- Exact matched required skill = full points
+- Partial match high confidence  = 70% points
+- Partial match medium confidence = 40% points
+- Partial match low confidence   = 20% points
+- Missing required skill          = 0 points
+- Final score = (weighted points / total possible) * 100, rounded to integer
+
+Return ONLY valid JSON, no markdown, no explanation.
+Schema:
+{
+  "score": 0,
+  "matched_skills": [],
+  "partial_matches": [
+    {
+      "required": "",
+      "candidate_has": "",
+      "confidence": "high|medium|low",
+      "note": ""
+    }
+  ],
+  "missing_keywords": [],
+  "strengths": [],
+  "weaknesses": [],
+  "suggestions": [{ "area": "", "tip": "" }]
+}
 `.trim();
 
 const OPTIMIZE_RESUME_SYSTEM = `
-You are an expert resume writer. Rewrite the resume bullets to naturally include missing keywords.
-Keep all content truthful. Use strong action verbs. Return ONLY valid JSON, no markdown.
-Schema: { "summary": "", "experience": [{ "company": "", "title": "", "start": "", "end": "", "bullets": [] }], "skills": [] }
-`.trim();
+You are an expert resume writer and ATS specialist.
 
+RULES:
+- Rewrite experience bullets to naturally include missing keywords
+- All content must remain truthful — never fabricate skills or experience
+- Use strong action verbs (Built, Designed, Optimized, Implemented, Led)
+- Add a professional summary that targets the job role
+- Include ALL skills the candidate has plus suggest adjacent skills to add
+- Format bullets as achievements where possible: "Did X using Y, resulting in Z"
+
+Return ONLY valid JSON, no markdown, no explanation.
+Schema:
+{
+  "summary": "",
+  "experience": [
+    {
+      "company": "",
+      "title": "",
+      "start": "",
+      "end": "",
+      "bullets": []
+    }
+  ],
+  "skills": [],
+  "skills_to_learn": []
+}
+`.trim();
 
 
 export const runAnalysis = async (req, res) => {
@@ -49,6 +124,7 @@ export const runAnalysis = async (req, res) => {
 
     let analysisRow = await analysesModel.getAnalysis(profileId, jobDescId);
 
+    // ── Step 1: Parse JD ──────────────────────────────────────────────────────
     let jdAnalysis = jd.extracted_data;
 
     if (!jdAnalysis) {
@@ -56,7 +132,6 @@ export const runAnalysis = async (req, res) => {
       const { data, model } = await askJSON(PARSE_JD_SYSTEM, `Job Description:\n${jd.description}`);
       jdAnalysis = data;
 
-      // Save to job_descriptions so same JD never re-parses
       await pool.query(
         'UPDATE job_descriptions SET extracted_data = $1, updated_at = NOW() WHERE id = $2',
         [JSON.stringify(jdAnalysis), jd.id]
@@ -73,6 +148,7 @@ export const runAnalysis = async (req, res) => {
       console.log('[Analysis] Step 1: Using cache ✓');
     }
 
+    // ── Step 2: Score match ───────────────────────────────────────────────────
     let matchData = analysisRow?.match_data;
 
     if (!matchData) {
@@ -82,6 +158,9 @@ export const runAnalysis = async (req, res) => {
         `Resume:\n${JSON.stringify(resumeData)}\n\nJob Analysis:\n${JSON.stringify(jdAnalysis)}`
       );
       matchData = data;
+
+      // Ensure partial_matches exists even if model omitted it
+      matchData.partial_matches = matchData.partial_matches || [];
 
       analysisRow = await analysesModel.saveAnalysis({
         userId, profileId, jobDescId,
@@ -102,6 +181,7 @@ export const runAnalysis = async (req, res) => {
       console.log('[Analysis] Step 2: Using cache ✓');
     }
 
+    // ── Step 3: Optimize resume ───────────────────────────────────────────────
     let optimizedContent = analysisRow?.optimized_content;
 
     if (!optimizedContent) {
@@ -138,6 +218,7 @@ export const runAnalysis = async (req, res) => {
         id:               analysisRow.id,
         score:            matchData.score,
         matched_skills:   matchData.matched_skills,
+        partial_matches:  matchData.partial_matches,
         missing_keywords: matchData.missing_keywords,
         strengths:        matchData.strengths,
         weaknesses:       matchData.weaknesses,
@@ -158,12 +239,7 @@ export const getAllAnalyses = async (req, res) => {
   try {
     const userId = req.user.userId;
     const analyses = await analysesModel.getAnalysesByUser(userId);
-
-    res.status(200).json({
-      message: 'Analyses fetched',
-      count: analyses.length,
-      analyses
-    });
+    res.status(200).json({ message: 'Analyses fetched', count: analyses.length, analyses });
   } catch (error) {
     console.error('Error in getAllAnalyses:', error);
     res.status(500).json({ message: 'Server error' });
@@ -173,19 +249,13 @@ export const getAllAnalyses = async (req, res) => {
 
 export const getAnalysisById = async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const { id }  = req.params;
-
+    const userId   = req.user.userId;
+    const { id }   = req.params;
     const analysis = await analysesModel.getAnalysisById(id, userId);
 
-    if (!analysis) {
-      return res.status(404).json({ message: 'Analysis not found' });
-    }
+    if (!analysis) return res.status(404).json({ message: 'Analysis not found' });
 
-    res.status(200).json({
-      message: 'Analysis fetched',
-      analysis
-    });
+    res.status(200).json({ message: 'Analysis fetched', analysis });
   } catch (error) {
     console.error('Error in getAnalysisById:', error);
     res.status(500).json({ message: 'Server error' });
@@ -195,14 +265,11 @@ export const getAnalysisById = async (req, res) => {
 
 export const deleteAnalysis = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId  = req.user.userId;
     const { id }  = req.params;
-
     const deleted = await analysesModel.deleteAnalysis(id, userId);
 
-    if (!deleted) {
-      return res.status(404).json({ message: 'Analysis not found' });
-    }
+    if (!deleted) return res.status(404).json({ message: 'Analysis not found' });
 
     res.status(200).json({ message: 'Analysis deleted' });
   } catch (error) {

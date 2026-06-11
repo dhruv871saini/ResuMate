@@ -11,13 +11,14 @@ async function createProfile(user_id, resume_data) {
   return result.rows[0];
 }
 
-async function updateProfile(id, resume_data) {
+async function updateProfile(id, userId, resume_data) {
   const result = await pool.query(
     `UPDATE profiles
      SET resume_data = $1
      WHERE id = $2
+       AND user_id = $3
      RETURNING id, user_id, resume_data`,
-    [resume_data, id]
+    [resume_data, id, userId]
   );
 
   return result.rows[0];
