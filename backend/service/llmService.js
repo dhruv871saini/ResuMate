@@ -117,9 +117,9 @@ export function parseJSON(text) {
 
 export async function ask(systemPrompt, userContent) {
   const providers = [
-    // { name: 'Gemini', fn: callGemini },
+    { name: 'Gemini', fn: callGemini },
     { name: 'Groq',   fn: callGroq   },
-    // { name: 'Ollama', fn: callOllama }
+    { name: 'Ollama', fn: callOllama }
   ];
 
   let lastError;
