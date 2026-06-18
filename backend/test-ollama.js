@@ -15,7 +15,7 @@ async function benchmarkOllama() {
         stream: false,
         options: {
           temperature: 0.1,
-          num_predict: 50  // Very short response for testing
+          num_predict: 50
         }
       }, { timeout: 60000 });
       
