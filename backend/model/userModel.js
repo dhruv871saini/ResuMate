@@ -58,15 +58,15 @@ async function saveResetCode(id, hashedCode, expiresAt) {
 
 async function verifyCode(email) {
   const result = await pool.query(
-    `SELECT (
-    reset_password_token,
-    reset_password_expires
-    ) FROM users
+    `SELECT 
+      reset_password_token,
+      reset_password_expires
+     FROM users
      WHERE email = $1,`[email],
   );
   return result.rows[0];
 }
-async function updatePassword(passwordHash, email) {
+async function updatePassword( email, passwordHash) {
   const result = await pool.query(
     `
     UPDATE users
@@ -87,4 +87,7 @@ export default {
   createUser,
   updateUser,
   deleteUser,
+  saveResetCode,
+  verifyCode,
+  updatePassword,
 };
