@@ -5,5 +5,8 @@ const userRoute = Router();
 
 userRoute.post("/signup", authController.signup);
 userRoute.post("/login", authController.login);
+userRoute.post("/forget", authController.forgetPassword);
+userRoute.post("/reset", authController.resetPassword);
+userRoute.post("/update", authController.updatePassword);
 
 export default userRoute;

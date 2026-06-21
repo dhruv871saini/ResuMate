@@ -16,12 +16,15 @@ async function initializeDatabase() {
     console.log(' Users table created successfully');
 
 
-
     await pool.query(`
         CREATE TABLE IF NOT EXISTS profiles (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID  REFERENCES users(id), 
         resume_data JSONB,
+        raw_text TEXT,                      
+        resume_file_url VARCHAR(255),       
+        resume_public_id VARCHAR(255),      
+        original_filename VARCHAR(255),     
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
