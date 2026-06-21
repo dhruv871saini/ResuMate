@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+
+:root {
+  --accent: #6366F1;
+  --accent-h: #4F46E5;
+  --accent-s: #818CF8;
+  --ok: #10B981;
+  --warn: #F59E0B;
+  --err: #EF4444;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Dark mode defaults */
+.dark body { background: #0A0F1E; color: #F1F5F9; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* Resume paper always light */
+.resume-paper { background: #ffffff; color: #1a202c; font-family: "Inter", sans-serif; }
+
+/* Score ring animation */
+.ring-fill { transition: stroke-dashoffset 1.2s ease; }
+
+/* Chip input ghost */
+.chip-input:focus { outline: none; }
+
+/* Skill box focus */
+.skill-box:focus-within { border-color: #6366F1; }
