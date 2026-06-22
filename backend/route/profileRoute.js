@@ -10,5 +10,5 @@ profileRouter.put('/', authMiddleware, profileController.updateProfile);
 
 // Optional: Get profile by userId
 profileRouter.get('/:userId', authMiddleware, profileController.getProfile);
-
+profileRouter.post('/parse-resume',  authMiddleware, profileController.parseResume);
 export default profileRouter;
