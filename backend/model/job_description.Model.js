@@ -16,7 +16,7 @@ async function updateJob_desc(id, userId, title, company_name, description) {
      SET title = $1, company_name = $2, description = $3, updated_at = NOW()
      WHERE id = $4 AND user_id = $5
      RETURNING id, user_id, title, company_name, description`,
-    [title, company_name, description, id, userId]   // fixed: removed stray comma in SQL, added userId
+    [title, company_name, description, id, userId]   
   );
   return result.rows[0] || null;
 }
