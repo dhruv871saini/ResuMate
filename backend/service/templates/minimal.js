@@ -1,55 +1,75 @@
-// service/templates/minimal.js
-// Whitespace-heavy, serif font. Clean, understated look.
-// Great for creative, academic, or writing-focused roles.
-
 export function minimalTemplate(data) {
   const {
-    name = '', email = '', phone = '', location = '', summary = '',
-    skills = [], experience = [], education = [], projects = [], achievements = []
+    name = "",
+    email = "",
+    phone = "",
+    location = "",
+    summary = "",
+    skills = [],
+    experience = [],
+    education = [],
+    projects = [],
+    achievements = [],
   } = data;
 
-  const experienceHtml = experience.map(exp => `
+  const experienceHtml = experience
+    .map(
+      (exp) => `
     <div class="job">
       <div class="job-header">
         <div>
-          <div class="job-title">${exp.title || ''}</div>
-          <div class="job-company">${exp.company || ''}</div>
+          <div class="job-title">${exp.title || ""}</div>
+          <div class="job-company">${exp.company || ""}</div>
         </div>
-        <div class="job-date">${exp.start || ''} – ${exp.end || ''}</div>
+        <div class="job-date">${exp.start || ""} – ${exp.end || ""}</div>
       </div>
-      <ul>${(exp.bullets || []).map(b => `<li>${b}</li>`).join('')}</ul>
+      <ul>${(exp.bullets || []).map((b) => `<li>${b}</li>`).join("")}</ul>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const educationHtml = education.map(edu => `
+  const educationHtml = education
+    .map(
+      (edu) => `
     <div class="edu-row">
       <div>
-        <strong>${edu.degree || ''}</strong>${edu.field ? ` in ${edu.field}` : ''} —
-        ${edu.institution || ''}
+        <strong>${edu.degree || ""}</strong>${edu.field ? ` in ${edu.field}` : ""} —
+        ${edu.institution || ""}
       </div>
-      <div class="job-date">${edu.year || ''}</div>
+      <div class="job-date">${edu.year || ""}</div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const projectsHtml = projects.length ? `
+  const projectsHtml = projects.length
+    ? `
     <div class="section-title">Projects</div>
     <hr class="divider">
-    ${projects.map(p => `
+    ${projects
+      .map(
+        (p) => `
       <div class="job">
         <div class="job-header">
-          <div class="job-title">${p.name || ''}</div>
-          <div class="job-date">${(p.tech || []).join(' · ')}</div>
+          <div class="job-title">${p.name || ""}</div>
+          <div class="job-date">${(p.tech || []).join(" · ")}</div>
         </div>
-        <p style="font-size:10.5px;margin:4px 0 0;color:#555;line-height:1.6">${p.description || ''}</p>
+        <p style="font-size:10.5px;margin:4px 0 0;color:#555;line-height:1.6">${p.description || ""}</p>
       </div>
-    `).join('')}
-  ` : '';
+    `,
+      )
+      .join("")}
+  `
+    : "";
 
-  const achievementsHtml = achievements.length ? `
+  const achievementsHtml = achievements.length
+    ? `
     <div class="section-title">Achievements</div>
     <hr class="divider">
-    <ul>${achievements.map(a => `<li>${a}</li>`).join('')}</ul>
-  ` : '';
+    <ul>${achievements.map((a) => `<li>${a}</li>`).join("")}</ul>
+  `
+    : "";
 
   return `<!DOCTYPE html>
 <html>
@@ -90,34 +110,50 @@ export function minimalTemplate(data) {
 
   <div class="name">${name}</div>
   <div class="contact">
-    ${email    ? `<span>${email}</span>`    : ''}
-    ${phone    ? `<span>${phone}</span>`    : ''}
-    ${location ? `<span>${location}</span>` : ''}
+    ${email ? `<span>${email}</span>` : ""}
+    ${phone ? `<span>${phone}</span>` : ""}
+    ${location ? `<span>${location}</span>` : ""}
   </div>
 
-  ${summary ? `
+  ${
+    summary
+      ? `
     <div class="section-title">About</div>
     <hr class="divider">
     <div class="summary">${summary}</div>
-  ` : ''}
+  `
+      : ""
+  }
 
-  ${skills.length ? `
+  ${
+    skills.length
+      ? `
     <div class="section-title">Skills</div>
     <hr class="divider">
-    <div class="skills-line">${skills.join(' · ')}</div>
-  ` : ''}
+    <div class="skills-line">${skills.join(" · ")}</div>
+  `
+      : ""
+  }
 
-  ${experience.length ? `
+  ${
+    experience.length
+      ? `
     <div class="section-title">Experience</div>
     <hr class="divider">
     ${experienceHtml}
-  ` : ''}
+  `
+      : ""
+  }
 
-  ${education.length ? `
+  ${
+    education.length
+      ? `
     <div class="section-title">Education</div>
     <hr class="divider">
     ${educationHtml}
-  ` : ''}
+  `
+      : ""
+  }
 
   ${projectsHtml}
   ${achievementsHtml}

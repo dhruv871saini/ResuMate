@@ -1,57 +1,77 @@
-// service/templates/classic.js
-// Single column layout — dark navy header bar.
-// Best ATS compatibility — parsers love this simple structure.
-
 export function classicTemplate(data) {
   const {
-    name = '', email = '', phone = '', location = '', summary = '',
-    skills = [], experience = [], education = [], projects = [], achievements = []
+    name = "",
+    email = "",
+    phone = "",
+    location = "",
+    summary = "",
+    skills = [],
+    experience = [],
+    education = [],
+    projects = [],
+    achievements = [],
   } = data;
 
-  const skillTags = skills.map(s =>
-    `<span class="skill">${s}</span>`
-  ).join('');
+  const skillTags = skills
+    .map((s) => `<span class="skill">${s}</span>`)
+    .join("");
 
-  const experienceHtml = experience.map(exp => `
+  const experienceHtml = experience
+    .map(
+      (exp) => `
     <div class="job">
       <div class="job-header">
         <div>
-          <div class="job-title">${exp.title || ''}</div>
-          <div class="job-company">${exp.company || ''}</div>
+          <div class="job-title">${exp.title || ""}</div>
+          <div class="job-company">${exp.company || ""}</div>
         </div>
-        <div class="job-date">${exp.start || ''} – ${exp.end || ''}</div>
+        <div class="job-date">${exp.start || ""} – ${exp.end || ""}</div>
       </div>
-      <ul>${(exp.bullets || []).map(b => `<li>${b}</li>`).join('')}</ul>
+      <ul>${(exp.bullets || []).map((b) => `<li>${b}</li>`).join("")}</ul>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const educationHtml = education.map(edu => `
+  const educationHtml = education
+    .map(
+      (edu) => `
     <div class="edu-row">
       <div>
-        <div class="edu-degree">${edu.degree || ''} ${edu.field ? `in ${edu.field}` : ''}</div>
-        <div class="edu-inst">${edu.institution || ''}</div>
+        <div class="edu-degree">${edu.degree || ""} ${edu.field ? `in ${edu.field}` : ""}</div>
+        <div class="edu-inst">${edu.institution || ""}</div>
       </div>
-      <div class="job-date">${edu.year || ''}</div>
+      <div class="job-date">${edu.year || ""}</div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const projectsHtml = projects.length ? `
+  const projectsHtml = projects.length
+    ? `
     <div class="section-title">Projects</div>
-    ${projects.map(p => `
+    ${projects
+      .map(
+        (p) => `
       <div class="job">
         <div class="job-header">
-          <div class="job-title">${p.name || ''}</div>
-          <div class="job-date">${(p.tech || []).join(' · ')}</div>
+          <div class="job-title">${p.name || ""}</div>
+          <div class="job-date">${(p.tech || []).join(" · ")}</div>
         </div>
-        <p style="font-size:10.5px;margin:4px 0 0;color:#444;line-height:1.5">${p.description || ''}</p>
+        <p style="font-size:10.5px;margin:4px 0 0;color:#444;line-height:1.5">${p.description || ""}</p>
       </div>
-    `).join('')}
-  ` : '';
+    `,
+      )
+      .join("")}
+  `
+    : "";
 
-  const achievementsHtml = achievements.length ? `
+  const achievementsHtml = achievements.length
+    ? `
     <div class="section-title">Achievements</div>
-    <ul>${achievements.map(a => `<li>${a}</li>`).join('')}</ul>
-  ` : '';
+    <ul>${achievements.map((a) => `<li>${a}</li>`).join("")}</ul>
+  `
+    : "";
 
   return `<!DOCTYPE html>
 <html>
@@ -112,28 +132,40 @@ export function classicTemplate(data) {
   <div class="header">
     <div class="name">${name}</div>
     <div class="contact">
-      ${email    ? `<span>✉ ${email}</span>`    : ''}
-      ${phone    ? `<span>📞 ${phone}</span>`    : ''}
-      ${location ? `<span>📍 ${location}</span>` : ''}
+      ${email ? `<span>✉ ${email}</span>` : ""}
+      ${phone ? `<span>📞 ${phone}</span>` : ""}
+      ${location ? `<span>📍 ${location}</span>` : ""}
     </div>
   </div>
 
-  ${summary ? `<div class="section-title">Summary</div><div class="summary">${summary}</div>` : ''}
+  ${summary ? `<div class="section-title">Summary</div><div class="summary">${summary}</div>` : ""}
 
-  ${skills.length ? `
+  ${
+    skills.length
+      ? `
     <div class="section-title">Skills</div>
     <div class="skills-wrap">${skillTags}</div>
-  ` : ''}
+  `
+      : ""
+  }
 
-  ${experience.length ? `
+  ${
+    experience.length
+      ? `
     <div class="section-title">Experience</div>
     ${experienceHtml}
-  ` : ''}
+  `
+      : ""
+  }
 
-  ${education.length ? `
+  ${
+    education.length
+      ? `
     <div class="section-title">Education</div>
     ${educationHtml}
-  ` : ''}
+  `
+      : ""
+  }
 
   ${projectsHtml}
   ${achievementsHtml}

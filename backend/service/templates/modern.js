@@ -1,46 +1,64 @@
-// service/templates/modern.js
-// Two column — sidebar for contact/skills, main panel for experience.
-// Still ATS-safe: Puppeteer outputs real searchable text, not images.
-
 export function modernTemplate(data) {
   const {
-    name = '', email = '', phone = '', location = '', summary = '',
-    skills = [], experience = [], education = [], projects = [], achievements = []
+    name = "",
+    email = "",
+    phone = "",
+    location = "",
+    summary = "",
+    skills = [],
+    experience = [],
+    education = [],
+    projects = [],
+    achievements = [],
   } = data;
 
-  const experienceHtml = experience.map(exp => `
+  const experienceHtml = experience
+    .map(
+      (exp) => `
     <div class="job">
       <div class="job-header">
         <div>
-          <div class="job-title">${exp.title || ''}</div>
-          <div class="job-company">${exp.company || ''}</div>
+          <div class="job-title">${exp.title || ""}</div>
+          <div class="job-company">${exp.company || ""}</div>
         </div>
-        <div class="job-date">${exp.start || ''} – ${exp.end || ''}</div>
+        <div class="job-date">${exp.start || ""} – ${exp.end || ""}</div>
       </div>
-      <ul>${(exp.bullets || []).map(b => `<li>${b}</li>`).join('')}</ul>
+      <ul>${(exp.bullets || []).map((b) => `<li>${b}</li>`).join("")}</ul>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const educationHtml = education.map(edu => `
+  const educationHtml = education
+    .map(
+      (edu) => `
     <div class="edu-row">
       <div>
-        <div class="edu-degree">${edu.degree || ''} ${edu.field ? `in ${edu.field}` : ''}</div>
-        <div class="edu-inst">${edu.institution || ''}</div>
+        <div class="edu-degree">${edu.degree || ""} ${edu.field ? `in ${edu.field}` : ""}</div>
+        <div class="edu-inst">${edu.institution || ""}</div>
       </div>
-      <div class="job-date">${edu.year || ''}</div>
+      <div class="job-date">${edu.year || ""}</div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const projectsHtml = projects.length ? `
+  const projectsHtml = projects.length
+    ? `
     <div class="section-title">Projects</div>
-    ${projects.map(p => `
+    ${projects
+      .map(
+        (p) => `
       <div class="job">
-        <div class="job-title" style="margin-bottom:3px">${p.name || ''}</div>
-        <div style="font-size:10px;color:#534AB7;margin-bottom:3px">${(p.tech || []).join(' · ')}</div>
-        <div style="font-size:10.5px;color:#333;line-height:1.5">${p.description || ''}</div>
+        <div class="job-title" style="margin-bottom:3px">${p.name || ""}</div>
+        <div style="font-size:10px;color:#534AB7;margin-bottom:3px">${(p.tech || []).join(" · ")}</div>
+        <div style="font-size:10.5px;color:#333;line-height:1.5">${p.description || ""}</div>
       </div>
-    `).join('')}
-  ` : '';
+    `,
+      )
+      .join("")}
+  `
+    : "";
 
   return `<!DOCTYPE html>
 <html>
@@ -116,29 +134,41 @@ export function modernTemplate(data) {
     <div class="avatar">${name.charAt(0).toUpperCase()}</div>
     <div class="s-name">${name}</div>
     <div class="s-contact">
-      ${email    ? `${email}<br>`    : ''}
-      ${phone    ? `${phone}<br>`    : ''}
-      ${location ? `${location}` : ''}
+      ${email ? `${email}<br>` : ""}
+      ${phone ? `${phone}<br>` : ""}
+      ${location ? `${location}` : ""}
     </div>
-    ${skills.length ? `
+    ${
+      skills.length
+        ? `
       <div class="s-title">Skills</div>
-      ${skills.map(s => `<div class="s-skill">${s}</div>`).join('')}
-    ` : ''}
+      ${skills.map((s) => `<div class="s-skill">${s}</div>`).join("")}
+    `
+        : ""
+    }
   </div>
 
   <!-- MAIN -->
   <div class="main">
-    ${summary ? `<div class="section-title">Profile</div><div class="summary">${summary}</div>` : ''}
+    ${summary ? `<div class="section-title">Profile</div><div class="summary">${summary}</div>` : ""}
 
-    ${experience.length ? `
+    ${
+      experience.length
+        ? `
       <div class="section-title">Experience</div>
       ${experienceHtml}
-    ` : ''}
+    `
+        : ""
+    }
 
-    ${education.length ? `
+    ${
+      education.length
+        ? `
       <div class="section-title">Education</div>
       ${educationHtml}
-    ` : ''}
+    `
+        : ""
+    }
 
     ${projectsHtml}
   </div>

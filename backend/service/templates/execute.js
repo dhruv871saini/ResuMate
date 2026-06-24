@@ -1,55 +1,75 @@
-// service/templates/executive.js
-// Teal accent header with a contact bar.
-// Great for senior, management, and leadership roles.
-
 export function executiveTemplate(data) {
   const {
-    name = '', email = '', phone = '', location = '', summary = '',
-    skills = [], experience = [], education = [], projects = [], achievements = []
+    name = "",
+    email = "",
+    phone = "",
+    location = "",
+    summary = "",
+    skills = [],
+    experience = [],
+    education = [],
+    projects = [],
+    achievements = [],
   } = data;
 
-  const currentRole = experience[0]?.title || '';
+  const currentRole = experience[0]?.title || "";
 
-  const experienceHtml = experience.map(exp => `
+  const experienceHtml = experience
+    .map(
+      (exp) => `
     <div class="job">
       <div class="job-header">
         <div>
-          <div class="job-title">${exp.title || ''}</div>
-          <div class="job-company">${exp.company || ''}</div>
+          <div class="job-title">${exp.title || ""}</div>
+          <div class="job-company">${exp.company || ""}</div>
         </div>
-        <div class="job-date">${exp.start || ''} – ${exp.end || ''}</div>
+        <div class="job-date">${exp.start || ""} – ${exp.end || ""}</div>
       </div>
-      <ul>${(exp.bullets || []).map(b => `<li>${b}</li>`).join('')}</ul>
+      <ul>${(exp.bullets || []).map((b) => `<li>${b}</li>`).join("")}</ul>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const educationHtml = education.map(edu => `
+  const educationHtml = education
+    .map(
+      (edu) => `
     <div class="edu-row">
       <div>
-        <div class="edu-degree">${edu.degree || ''} ${edu.field ? `in ${edu.field}` : ''}</div>
-        <div class="edu-inst">${edu.institution || ''}</div>
+        <div class="edu-degree">${edu.degree || ""} ${edu.field ? `in ${edu.field}` : ""}</div>
+        <div class="edu-inst">${edu.institution || ""}</div>
       </div>
-      <div class="job-date">${edu.year || ''}</div>
+      <div class="job-date">${edu.year || ""}</div>
     </div>
-  `).join('');
+  `,
+    )
+    .join("");
 
-  const projectsHtml = projects.length ? `
+  const projectsHtml = projects.length
+    ? `
     <div class="section-title">Projects</div>
-    ${projects.map(p => `
+    ${projects
+      .map(
+        (p) => `
       <div class="job">
         <div class="job-header">
-          <div class="job-title">${p.name || ''}</div>
-          <div style="font-size:10px;color:#0F6E56">${(p.tech || []).join(' · ')}</div>
+          <div class="job-title">${p.name || ""}</div>
+          <div style="font-size:10px;color:#0F6E56">${(p.tech || []).join(" · ")}</div>
         </div>
-        <p style="font-size:10.5px;margin:4px 0 0;color:#444;line-height:1.5">${p.description || ''}</p>
+        <p style="font-size:10.5px;margin:4px 0 0;color:#444;line-height:1.5">${p.description || ""}</p>
       </div>
-    `).join('')}
-  ` : '';
+    `,
+      )
+      .join("")}
+  `
+    : "";
 
-  const achievementsHtml = achievements.length ? `
+  const achievementsHtml = achievements.length
+    ? `
     <div class="section-title">Achievements</div>
-    <ul>${achievements.map(a => `<li>${a}</li>`).join('')}</ul>
-  ` : '';
+    <ul>${achievements.map((a) => `<li>${a}</li>`).join("")}</ul>
+  `
+    : "";
 
   return `<!DOCTYPE html>
 <html>
@@ -103,33 +123,45 @@ export function executiveTemplate(data) {
 
   <div class="header">
     <div class="name">${name}</div>
-    ${currentRole ? `<div class="role">${currentRole}</div>` : ''}
+    ${currentRole ? `<div class="role">${currentRole}</div>` : ""}
   </div>
 
   <div class="contact-bar">
-    ${email    ? `<span>✉ ${email}</span>`    : ''}
-    ${phone    ? `<span>📞 ${phone}</span>`    : ''}
-    ${location ? `<span>📍 ${location}</span>` : ''}
+    ${email ? `<span>✉ ${email}</span>` : ""}
+    ${phone ? `<span>📞 ${phone}</span>` : ""}
+    ${location ? `<span>📍 ${location}</span>` : ""}
   </div>
 
   <div class="body">
 
-    ${summary ? `<div class="section-title">Executive Summary</div><div class="summary">${summary}</div>` : ''}
+    ${summary ? `<div class="section-title">Executive Summary</div><div class="summary">${summary}</div>` : ""}
 
-    ${skills.length ? `
+    ${
+      skills.length
+        ? `
       <div class="section-title">Core Competencies</div>
-      <div class="skills-wrap">${skills.map(s => `<span class="skill">${s}</span>`).join('')}</div>
-    ` : ''}
+      <div class="skills-wrap">${skills.map((s) => `<span class="skill">${s}</span>`).join("")}</div>
+    `
+        : ""
+    }
 
-    ${experience.length ? `
+    ${
+      experience.length
+        ? `
       <div class="section-title">Professional Experience</div>
       ${experienceHtml}
-    ` : ''}
+    `
+        : ""
+    }
 
-    ${education.length ? `
+    ${
+      education.length
+        ? `
       <div class="section-title">Education</div>
       ${educationHtml}
-    ` : ''}
+    `
+        : ""
+    }
 
     ${projectsHtml}
     ${achievementsHtml}
