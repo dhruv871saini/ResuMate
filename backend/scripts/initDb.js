@@ -81,6 +81,10 @@ async function initializeDatabase() {
 
       model_used        VARCHAR(50) DEFAULT 'gemini-1.5-flash',
 
+      pdf_url           TEXT,
+      pdf_template      VARCHAR(255),
+      pdf_created_at    TIMESTAMP,
+
       created_at        TIMESTAMP DEFAULT NOW(),
       updated_at        TIMESTAMP DEFAULT NOW(),
 

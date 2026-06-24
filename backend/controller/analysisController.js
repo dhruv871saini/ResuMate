@@ -124,7 +124,6 @@ export const runAnalysis = async (req, res) => {
 
     let analysisRow = await analysesModel.getAnalysis(profileId, jobDescId);
 
-    // ── Step 1: Parse JD ──────────────────────────────────────────────────────
     let jdAnalysis = jd.extracted_data;
 
     if (!jdAnalysis) {
@@ -148,7 +147,6 @@ export const runAnalysis = async (req, res) => {
       console.log('[Analysis] Step 1: Using cache ✓');
     }
 
-    // ── Step 2: Score match ───────────────────────────────────────────────────
     let matchData = analysisRow?.match_data;
 
     if (!matchData) {
@@ -181,7 +179,6 @@ export const runAnalysis = async (req, res) => {
       console.log('[Analysis] Step 2: Using cache ✓');
     }
 
-    // ── Step 3: Optimize resume ───────────────────────────────────────────────
     let optimizedContent = analysisRow?.optimized_content;
 
     if (!optimizedContent) {
