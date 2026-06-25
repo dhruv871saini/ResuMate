@@ -1,7 +1,7 @@
 import profileModel from "../model/profile.Model.js";
 import { askJSON } from "../service/llmService.js";
 import axios from "axios";
-import * as pdfParse from 'pdf-parse';
+import pdfParse from 'pdf-parse';
 import mammoth from "mammoth";
 
 const PARSE_RESUME_SYSTEM = `

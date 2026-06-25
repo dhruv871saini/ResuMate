@@ -50,3 +50,13 @@ export const deleteDescription = async (req, res) => {
     return res.status(500).json({ message: 'Server error' });
   }
 };
+export const getAllDescriptions = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const jds = await job_descriptionModel.getAllJob_desc(userId);
+    return res.status(200).json({ message: 'Job descriptions fetched', jds });
+  } catch (error) {
+    console.error('Error in getAllDescriptions:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};

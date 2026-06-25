@@ -77,24 +77,24 @@ export const login = async (req, res) => {
 
 export const forgetPassword = async (req, res) => {
   try {
-  const { email } = req.body;
-  if (!email)
-    return res.status(400).json({ message: "email or username required" });
-  const user = await userModel.findByEmail(email);
-  if (!user) {
-    return res.status(200).json({
-      message: "If the account exists, a reset code has been sent",
-    });
-  }
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  const hashedCode = await bcrypt.hash(code, 10);
-  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+    const { email } = req.body;
+    if (!email)
+      return res.status(400).json({ message: "email or username required" });
+    const user = await userModel.findByEmail(email);
+    if (!user) {
+      return res.status(200).json({
+        message: "If the account exists, a reset code has been sent",
+      });
+    }
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedCode = await bcrypt.hash(code, 10);
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-  await userModel.saveResetCode(user.id, hashedCode, expiresAt);
-  await sendOTP(email, code);
-  return res.status(200).json({
-    message: "otp are send successfully",
-  });
+    await userModel.saveResetCode(user.id, hashedCode, expiresAt);
+    await sendOTP(email, code);
+    return res.status(200).json({
+      message: "otp are send successfully",
+    });
   } catch (error) {
     console.error(`error in forget password ${error} `);
     return res.status(500).json({ message: "Server error" });
@@ -118,7 +118,10 @@ export const resetPassword = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid code" });
     }
-    return res.status(200).json({ message: "Code verified" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await userModel.updatePassword(email, hashedPassword);
+    return res.status(200).json({ message: "Password reset successfully" });
   } catch (error) {
     console.error(`error in reset password ${error} `);
     return res.status(500).json({ message: "Server error" });
@@ -138,4 +141,4 @@ export const updatePassword = async (req, res) => {
     console.error(`error in update password ${error} `);
     return res.status(500).json({ message: "Server error" });
   }
-}
+};

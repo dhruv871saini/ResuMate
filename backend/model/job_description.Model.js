@@ -39,9 +39,18 @@ async function getJobDescById(id, userId) {
   return result.rows[0] || null;
 }
 
+async function getAllDescriptions(userId) {
+   const result = await pool.query(
+    `SELECT id, title, company_name, extracted_data, created_at
+     FROM job_descriptions WHERE user_id = $1 ORDER BY created_at DESC`,
+    [req.user.userId]
+  );
+  return result.rows;
+}
 export default {
   createJob_desc,
   updateJob_desc,
   deleteJob_desc,
-  getJobDescById
+  getJobDescById,
+  getAllDescriptions
 };

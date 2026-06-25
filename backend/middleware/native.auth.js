@@ -7,7 +7,10 @@ const authMiddleware = (req, res, next) => {
         return res.status(401).json({ message: "unauthorized token not provided" })
     }
     try {
-        jwt.verify(authheader, process.env.JWT_SECRET, (err, decoded) => {
+        const token = authheader.startsWith('Bearer ')
+         ? authheader.slice(7) : authheader;
+
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) {
                 return res.status(401).json({ message: "invalid token" })
             }

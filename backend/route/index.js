@@ -10,7 +10,7 @@ const routes = Router();
 routes.use('/user',userRoute);
 routes.use('/profile',profileRouter);
 routes.use('/job_desc',job_desc);
-routes.use('/converstion',conversationRouter);
+routes.use('/conversation',conversationRouter);
 routes.use('/analysis',analysisRouter)
 routes.use('/pdf',pdfRouter)
 
