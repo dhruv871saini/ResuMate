@@ -367,7 +367,7 @@ import { CheckCircle as CheckIcon } from "lucide-react";
 const TEMPLATES_INFO = [
   { id: "modern" as const, name: "Modern", style: "Two-column · Indigo header", badge: "Most popular", badgeColor: "bg-emerald-500/10 text-emerald-400" },
   { id: "classic" as const, name: "Classic", style: "Single-column · Serif display", badge: "", badgeColor: "" },
-  { id: "purple" as const, name: "Purple", style: "Bold headings · Corporate", badge: "Inspired by your upload", badgeColor: "bg-violet-500/10 text-violet-400" },
+  { id: "executive" as const, name: "Purple", style: "Bold headings · Corporate", badge: "Inspired by your upload", badgeColor: "bg-violet-500/10 text-violet-400" },
   { id: "minimal" as const, name: "Minimal", style: "Timeline · Ultra-clean", badge: "", badgeColor: "" },
 ];
 

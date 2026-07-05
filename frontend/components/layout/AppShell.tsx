@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import type { PageId, NavigateFn } from "@/lib/navigation";
 import { LayoutDashboard, FileText, Search, Briefcase, LayoutTemplate, Sun, Moon, LogOut, Plus, PenLine } from "lucide-react";
 import { useStore } from "@/store/useStore";
+import { setToken } from "@/lib/api";
 import Toast from "@/components/ui/Toast";
 import DashboardPage from "@/components/pages/DashboardPage";
 import BuilderPage from "@/components/pages/BuilderPage";
 import AnalyzerPage from "@/components/pages/AnalyzerPage";
 import JobsPage from "@/components/pages/JobsPage";
 import TemplatesPage from "@/components/pages/TemplatesPage";
+import MyResumesPage from "@/components/pages/MyreumePage";
 
 
 interface NavItem { id: PageId; label: string; icon: React.ElementType; badge?: string }
@@ -27,11 +29,19 @@ const PAGE_META: Record<PageId, { title: string; sub: string }> = {
   analyzer: { title: "ATS Analyzer", sub: "Mogi I/O · 82% match" },
   jobs: { title: "Job Descriptions", sub: "Track and analyze job descriptions" },
   templates: { title: "Templates", sub: "4 ATS-safe professional designs" },
+  resumes: { title: "My Resumes", sub: "Saved PDFs generated from your analyses" },
 };
 
 export default function AppShell() {
   const [page, setPage] = useState<PageId>("dashboard");
-  const { theme, toggleTheme, logout, user, showToast } = useStore();
+  const { theme, toggleTheme, logout, user, showToast, isLoggedIn, token, fetchJobs, fetchAnalyses } = useStore();
+
+  // Reload jobs + analyses from backend when session is restored after refresh
+  useEffect(() => {
+    if (!isLoggedIn || !token) return;
+    setToken(token);
+    void Promise.all([fetchJobs(), fetchAnalyses()]);
+  }, [isLoggedIn, token, fetchJobs, fetchAnalyses]);
 
   const initials = user?.name
     ? user.name.split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2)
@@ -44,6 +54,7 @@ export default function AppShell() {
       case "analyzer": return <AnalyzerPage />;
       case "jobs": return <JobsPage />;
       case "templates": return <TemplatesPage goTo={(p: PageId) => setPage(p)} />;
+      case "resumes": return <MyResumesPage goTo={(p: PageId) => setPage(p)} />;
     }
   };
 

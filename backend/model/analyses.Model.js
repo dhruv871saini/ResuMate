@@ -78,6 +78,7 @@ async function getAnalysesByUser(userId) {
     `SELECT
        a.id, a.score, a.updated_at, a.created_at,
        a.pdf_url, a.pdf_template,
+       a.match_data, a.optimized_content,
        a.match_data        IS NOT NULL AS has_score,
        a.optimized_content IS NOT NULL AS has_optimized,
        j.title, j.company_name,

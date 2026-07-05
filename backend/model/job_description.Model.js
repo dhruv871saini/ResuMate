@@ -41,7 +41,7 @@ async function getJobDescById(id, userId) {
 
 async function getAllDescriptions(userId) {
    const result = await pool.query(
-    `SELECT id, title, company_name, extracted_data, created_at
+    `SELECT id, title, company_name, description, extracted_data, created_at
      FROM job_descriptions WHERE user_id = $1 ORDER BY created_at DESC`,
     [userId]
   );

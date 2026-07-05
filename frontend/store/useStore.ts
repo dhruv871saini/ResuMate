@@ -210,9 +210,12 @@ export const useStore = create<AppState>()(
           set({
             jobs: jobs.map((j) => ({
               id: j.id, title: j.title, company: j.company_name,
-              description: "", analyzed: !!j.extracted_data,
+              description: j.description ?? "",
+              analyzed: !!j.extracted_data,
               score: undefined,
-              addedAt: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+              addedAt: j.created_at
+                ? new Date(j.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+                : new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
             })),
           });
         } catch { /* not logged in yet */ }
@@ -263,10 +266,26 @@ export const useStore = create<AppState>()(
       fetchAnalyses: async () => {
         try {
           const { analyses } = await analysisApi.getAll();
-          const map: Record<string, unknown> = {};
-          analyses.forEach((a) => { map[a.job_desc_id] = a; });
+          const map: Record<string, AnalysisResult> = {};
+          analyses.forEach((a) => {
+            const match = a.match_data ?? {};
+            map[a.job_desc_id] = {
+              id: a.id,
+              jobId: a.job_desc_id,
+              score: a.score,
+              matched_skills: match.matched_skills ?? [],
+              partial_matches: match.partial_matches ?? [],
+              missing_keywords: match.missing_keywords ?? [],
+              strengths: match.strengths ?? [],
+              weaknesses: match.weaknesses ?? [],
+              suggestions: match.suggestions ?? [],
+              optimized_resume: a.optimized_content ?? {
+                summary: "", experience: [], skills: [], skills_to_learn: [],
+              },
+            };
+          });
           set((s) => ({
-            analyses: map as Record<string, AnalysisResult>,
+            analyses: map,
             jobs: s.jobs.map((j) => {
               const a = analyses.find((a) => a.job_desc_id === j.id);
               return a ? { ...j, score: a.score, analyzed: true } : j;

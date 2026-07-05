@@ -70,19 +70,19 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
             {
               step: "01", icon: Upload, label: "Build your profile",
               sub: "Upload your existing resume or fill in your details manually.",
-              action: "Go to Resume Builder", page: "builder",
+              action: "Go to Resume Builder", page: "builder" as PageId,
               done: !isProfileEmpty,
             },
             {
               step: "02", icon: Briefcase, label: "Add a job description",
               sub: "Paste a job posting. AI extracts all the ATS keywords automatically.",
-              action: "Add Job Description", page: "jobs",
+              action: "Add Job Description", page: "jobs" as PageId,
               done: jobs.length > 0,
             },
             {
               step: "03", icon: BarChart2, label: "Run your first analysis",
               sub: "Get a match score, missing keywords, and an AI-optimized resume in 20 seconds.",
-              action: "Go to Analyzer", page: "analyzer",
+              action: "Go to Analyzer", page: "analyzer" as PageId,
               done: analyzedJobs.length > 0,
             },
           ].map(({ step, icon: Icon, label, sub, action, page, done }) => (

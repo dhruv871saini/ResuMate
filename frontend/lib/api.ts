@@ -54,8 +54,12 @@ export const jobApi = {
     req<{ job: { id: string; title: string; company_name: string } }>(
       'POST', '/job_desc', { title, company_name, description }),
   getAll: () =>
-    req<{ jobs: Array<{ id: string; title: string; company_name: string; extracted_data: object | null }> }>(
-      'GET', '/job_desc'),
+    req<{
+      jobs: Array<{
+        id: string; title: string; company_name: string;
+        description?: string; extracted_data: object | null; created_at?: string;
+      }>
+    }>('GET', '/job_desc'),
   delete: (id: string) => req<{ message: string }>('DELETE', `/job_desc/${id}`),
 };
 
@@ -84,6 +88,20 @@ export const analysisApi = {
         has_score: boolean; has_optimized: boolean;
         title: string; company_name: string; job_desc_id: string;
         pdf_url?: string; pdf_template?: string;
+        match_data?: {
+          matched_skills?: string[];
+          partial_matches?: Array<{ required: string; candidate_has: string; confidence: string; note: string }>;
+          missing_keywords?: string[];
+          strengths?: string[];
+          weaknesses?: string[];
+          suggestions?: Array<{ area: string; tip: string }>;
+        };
+        optimized_content?: {
+          summary: string;
+          experience: Array<{ company: string; title: string; start: string; end: string; bullets: string[] }>;
+          skills: string[];
+          skills_to_learn: string[];
+        };
       }>
     }>('GET', '/analysis'),
   delete: (id: string) => req<{ message: string }>('DELETE', `/analysis/${id}`),
