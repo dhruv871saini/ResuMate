@@ -2,6 +2,7 @@
 // Shows all PDFs the user has generated, stored on Cloudinary.
 // User can download, preview, or generate a new one from any analysis.
 "use client";
+import type { NavigateFn } from "@/lib/navigation";
 import { useState, useEffect } from "react";
 import { FileText, Download, ExternalLink, Loader2, Plus, Zap } from "lucide-react";
 import { pdfApi } from "@/lib/api";
@@ -24,9 +25,7 @@ const TEMPLATE_COLORS: Record<string, string> = {
   executive: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
 };
 
-interface Props { goTo: (page: string) => void }
-
-export default function MyResumesPage({ goTo }: Props) {
+export default function MyResumesPage({ goTo }: { goTo: NavigateFn }) {
   const { analyses, jobs, showToast } = useStore();
   const [resumes, setResumes]         = useState<SavedResume[]>([]);
   const [loading, setLoading]         = useState(true);

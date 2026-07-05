@@ -1,41 +1,78 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap");
 
-:root {
-  --accent: #6366F1;
-  --accent-h: #4F46E5;
-  --accent-s: #818CF8;
-  --ok: #10B981;
-  --warn: #F59E0B;
-  --err: #EF4444;
+/*
+  Tailwind v4 theme — replaces tailwind.config.ts entirely.
+  All custom tokens live here in CSS via @theme.
+*/
+@theme {
+  /* Fonts */
+  --font-sans:    "Inter", sans-serif;
+  --font-display: "Syne", sans-serif;
+  --font-serif:   "Playfair Display", serif;
+
+  /* Custom colors */
+  --color-ink:         #0A0F1E;
+  --color-ink-2:       #111827;
+  --color-ink-3:       #1E293B;
+  --color-surface:     #1E293B;
+  --color-surface-2:   #253347;
+  --color-surface-3:   #2D3E57;
+  --color-accent:      #6366F1;
+  --color-accent-hover:#4F46E5;
+  --color-accent-soft: #818CF8;
+  --color-accent-muted:rgba(99,102,241,0.12);
+
+  /* Box shadows */
+  --shadow-glow: 0 0 0 1px #6366F1;
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.25);
 }
 
-* { box-sizing: border-box; }
+/* Dark mode via .dark class on <html> */
+@variant dark (&:where(.dark, .dark *));
+
+/* ── Base styles ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Dark mode defaults */
+/* Dark mode background */
 .dark body { background: #0A0F1E; color: #F1F5F9; }
 
-/* Scrollbar */
+/* ── Scrollbar ────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
-/* Resume paper always light */
-.resume-paper { background: #ffffff; color: #1a202c; font-family: "Inter", sans-serif; }
+/* ── Custom component classes ─────────────────────────────── */
 
-/* Score ring animation */
+/* Resume preview is always light regardless of dark mode */
+.resume-paper {
+  background: #ffffff;
+  color: #1a202c;
+  font-family: var(--font-sans);
+}
+
+/* Score ring SVG animation */
 .ring-fill { transition: stroke-dashoffset 1.2s ease; }
 
-/* Chip input ghost */
+/* Skill chip input */
 .chip-input:focus { outline: none; }
 
-/* Skill box focus */
+/* Skill box focus ring */
 .skill-box:focus-within { border-color: #6366F1; }
+
+/* CSS custom properties for components that reference these directly */
+:root {
+  --accent:   #6366F1;
+  --accent-h: #4F46E5;
+  --accent-s: #818CF8;
+  --ok:       #10B981;
+  --warn:     #F59E0B;
+  --err:      #EF4444;
+}

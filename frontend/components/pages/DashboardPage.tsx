@@ -1,10 +1,9 @@
 "use client";
+import type { PageId, NavigateFn } from "@/lib/navigation";
 import { TrendingUp, Briefcase, BarChart2, CheckCircle, Clock, Plus, Upload, ArrowRight } from "lucide-react";
 import { useStore } from "@/store/useStore";
 
-interface Props { goTo: (page: string) => void }
-
-export default function DashboardPage({ goTo }: Props) {
+export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
   const { profile, jobs, analyses, isNewUser, user } = useStore();
 
   // ── Profile completeness ──────────────────────────────────────────────────
