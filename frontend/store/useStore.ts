@@ -49,8 +49,8 @@ interface AppState {
 
   theme: "dark" | "light";
   toggleTheme: () => void;
-  activeTemplate: "modern" | "classic" | "purple" | "minimal";
-  setTemplate: (t: "modern" | "classic" | "purple" | "minimal") => void;
+  activeTemplate: "modern" | "classic" | "executive" | "minimal";
+  setTemplate: (t: "modern" | "classic" | "executive" | "minimal") => void;
 
   profile: ResumeProfile;
   updateProfile: (data: Partial<ResumeProfile>) => void;
@@ -228,8 +228,15 @@ export const useStore = create<AppState>()(
       },
 
       removeJob: async (id) => {
+        // Only remove from UI if API call succeeds
         await jobApi.delete(id);
-        set((s) => ({ jobs: s.jobs.filter((j) => j.id !== id) }));
+        set((s) => ({
+          jobs: s.jobs.filter((j) => j.id !== id),
+          // Also clear any analysis for this job
+          analyses: Object.fromEntries(
+            Object.entries(s.analyses).filter(([jobId]) => jobId !== id)
+          ),
+        }));
       },
 
       // ── Analysis ─────────────────────────────────────────────────────────────

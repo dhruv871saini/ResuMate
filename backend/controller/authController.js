@@ -131,11 +131,15 @@ export const resetPassword = async (req, res) => {
 export const updatePassword = async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).json({ message: "email and password are required" });
     const user = await userModel.findByEmail(email);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    await userModel.updatePassword(email, password);
+    // FIX: hash password before saving — was storing plain text
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await userModel.updatePassword(email, hashedPassword);
     return res.status(200).json({ message: "Password updated" });
   } catch (error) {
     console.error(`error in update password ${error} `);

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LayoutDashboard, FileText, Search, Briefcase, LayoutTemplate, Sun, Moon, LogOut, Plus, PenLine } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import Toast from "@/components/ui/Toast";
@@ -8,8 +8,9 @@ import BuilderPage from "@/components/pages/BuilderPage";
 import AnalyzerPage from "@/components/pages/AnalyzerPage";
 import JobsPage from "@/components/pages/JobsPage";
 import TemplatesPage from "@/components/pages/TemplatesPage";
+import MyResumesPage from "@/components/pages/MyreumePage";
 
-type PageId = "dashboard" | "builder" | "analyzer" | "jobs" | "templates";
+type PageId = "dashboard" | "builder" | "analyzer" | "jobs" | "templates" | "resumes";
 
 interface NavItem { id: PageId; label: string; icon: React.ElementType; badge?: string }
 
@@ -19,19 +20,28 @@ const NAV: NavItem[] = [
   { id: "analyzer", label: "ATS Analyzer", icon: Search, badge: "3" },
   { id: "jobs", label: "Job Descriptions", icon: Briefcase },
   { id: "templates", label: "Templates", icon: LayoutTemplate },
+  { id: "resumes",   label: "My Resumes",  icon: FileText },
 ];
 
 const PAGE_META: Record<PageId, { title: string; sub: string }> = {
   dashboard: { title: "Dashboard", sub: "Your resume performance at a glance" },
   builder: { title: "Resume Builder", sub: "Your profile updates live as you type" },
-  analyzer: { title: "ATS Analyzer", sub: "Mogi I/O · 82% match" },
+  analyzer: { title: "ATS Analyzer", sub: "Your Analytics " },
   jobs: { title: "Job Descriptions", sub: "Track and analyze job descriptions" },
   templates: { title: "Templates", sub: "4 ATS-safe professional designs" },
+  resumes:   { title: "My Resumes", sub: "Download your generated PDFs" },
 };
 
 export default function AppShell() {
   const [page, setPage] = useState<PageId>("dashboard");
-  const { theme, toggleTheme, logout, user, showToast } = useStore();
+  const { theme, toggleTheme, logout, user, showToast, fetchJobs, fetchAnalyses, isLoggedIn, token } = useStore();
+
+  useEffect(() => {
+    if (isLoggedIn && token) {
+      fetchJobs();
+      fetchAnalyses();
+    }
+  }, []);
 
   const initials = user?.name
     ? user.name.split(" ").map((w: string) => w[0]).join("").toUpperCase().slice(0, 2)
@@ -44,6 +54,7 @@ export default function AppShell() {
       case "analyzer": return <AnalyzerPage />;
       case "jobs": return <JobsPage />;
       case "templates": return <TemplatesPage goTo={setPage} />;
+      case "resumes":   return <MyResumesPage goTo={setPage} />;
     }
   };
 
@@ -77,10 +88,11 @@ export default function AppShell() {
             </div>
           </div>
           <button onClick={toggleTheme} className="flex items-center justify-between w-full px-2.5 py-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-200 text-[12.5px] font-medium transition-all">
-            <span className="flex items-center gap-2">{theme === "dark" ? <Sun size={13} /> : <Moon size={13} />}{theme === "dark" ? "Light mode" : "Dark mode"}</span>
-            <div className={`w-8 h-4 rounded-full relative transition-colors ${theme === "light" ? "bg-indigo-500" : "bg-slate-600"}`}>
-              <div className={`w-3 h-3 bg-white rounded-full absolute top-0.5 transition-transform ${theme === "light" ? "translate-x-4" : "translate-x-0.5"}`} />
-            </div>
+            
+            {/* <span className="flex items-center gap-2">{theme === "dark" ? <Sun size={13} /> : <Moon size={13} />}{theme === "dark" ? "Light mode" : "Dark mode"}</span> */}
+            {/* <div className={`w-8 h-4 rounded-full relative transition-colors ${theme === "light" ? "bg-indigo-500" : "bg-slate-600"}`}> */}
+              {/* <div className={`w-3 h-3 bg-white rounded-full absolute top-0.5 transition-transform ${theme === "light" ? "translate-x-4" : "translate-x-0.5"}`} /> */}
+            {/* </div> */}
           </button>
           <button onClick={() => { logout(); showToast("Signed out", "info"); }}
             className="flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-red-400 hover:bg-red-500/10 text-[12.5px] font-medium transition-all mt-0.5">

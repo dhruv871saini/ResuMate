@@ -10,11 +10,3 @@ cloudinary.config({
 export default cloudinary;
 
 
-
-// CLOUDINARY_URL=cloudinary://586493736966322:xCPzO76YRDVc7IxWW9JPDFzbZM8@deskpl2k8
-// Cloud name	
-// deskpl2k8
-// API key	
-// 586493736966322
-// API secret	
-// xCPzO76YRDVc7IxWW9JPDFzbZM8

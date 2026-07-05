@@ -1,7 +1,7 @@
 "use client";
 import { useStore, ResumeProfile } from "@/store/useStore";
 
-type Template = "modern" | "classic" | "purple" | "minimal";
+type Template = "modern" | "classic" | "executive" | "minimal";
 
 interface Props {
   template?: Template;
@@ -262,7 +262,7 @@ export default function ResumeRenderer({ template, scale = 1 }: Props) {
 
   const content = tpl === "modern" ? <Modern p={profile} />
     : tpl === "classic" ? <Classic p={profile} />
-    : tpl === "purple" ? <Purple p={profile} />
+    : tpl === "executive" ? <Purple p={profile} />
     : <Minimal p={profile} />;
 
   if (scale !== 1) {

@@ -4,9 +4,7 @@ import Groq from 'groq-sdk';
 
 async function callGemini(systemPrompt, userContent) {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
-  console.log(` apikey  hh ${process.env.GEMINI_API_KEY}`)
   if (!apiKey) throw new Error('GEMINI_API_KEY not set');
-  console.log(`gemini ${apiKey}`)
 
   const genAI = new GoogleGenAI({ apiKey });
 
@@ -30,7 +28,6 @@ async function callGemini(systemPrompt, userContent) {
 async function callGroq(systemPrompt, userContent) {
   const apiKey = process.env.GROQ_API_KEY?.trim();
   if (!apiKey) throw new Error('GROQ_API_KEY not set');
-  console.log(`grok ${apiKey}`)
 
   const groq = new Groq({ apiKey });
   const trimmed = userContent.length > 12000 ? userContent.slice(0, 12000) + '...' : userContent;

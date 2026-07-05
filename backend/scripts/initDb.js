@@ -51,7 +51,7 @@ async function initializeDatabase() {
     CREATE TABLE IF NOT EXISTS conversations (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-      job_description_id UUID REFERENCES job_descriptions(id),
+      job_description_id UUID REFERENCES job_descriptions(id) ON DELETE CASCADE,
       profile_id UUID REFERENCES profiles(id),
       prompt TEXT NOT NULL,
       response TEXT NOT NULL,

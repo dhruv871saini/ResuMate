@@ -61,7 +61,7 @@ async function verifyCode(email) {
       reset_password_token,
       reset_password_expires
      FROM users
-     WHERE email = $1`[email],
+     WHERE email = $1`, [email]
   );
   return result.rows[0];
 }

@@ -12,6 +12,6 @@ routes.use('/profile',profileRouter);
 routes.use('/job_desc',job_desc);
 routes.use('/conversation',conversationRouter);
 routes.use('/analysis',analysisRouter)
-routes.use('/pdf',pdfRouter)
+routes.use('/api/pdf',pdfRouter)
 
 export default routes;

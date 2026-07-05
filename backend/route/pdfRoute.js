@@ -6,7 +6,7 @@ import {
 } from "../controller/pdfController.js";
 import authMiddleware from "../middleware/native.auth.js";
 
-const pdfRouter = express.pdfRouter();
+const pdfRouter = express.Router();
 pdfRouter.use(authMiddleware);
 
 pdfRouter.post("/", generateAndUploadPDF);

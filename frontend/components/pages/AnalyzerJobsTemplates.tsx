@@ -1,69 +1,83 @@
 "use client";
-// ─── ANALYZER PAGE ───────────────────────────────────────────────────────────
+// ─── ANALYZER PAGE ─────────────────────────────────────────────────────────
 import { useState } from "react";
-import { RefreshCw, CheckCircle, AlertCircle, XCircle, ChevronDown } from "lucide-react";
-import { useStore } from "@/store/useStore";
+import { RefreshCw, CheckCircle, AlertCircle, XCircle, Loader2, Zap, Plus } from "lucide-react";
+import { useStore, AnalysisResult } from "@/store/useStore";
 
 export function AnalyzerPage() {
+  const {
+    jobs, analyses, runAnalysis, analyzingJobId,
+    profileId, showToast,
+  } = useStore();
+
+  // Which job is selected in the sidebar
+  const analyzedJobs = jobs.filter(j => j.analyzed || analyses[j.id]);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(
+    analyzedJobs[0]?.id ?? jobs[0]?.id ?? null
+  );
   const [tab, setTab] = useState<"score" | "optimized" | "keywords">("score");
-  const { showToast, jobs } = useStore();
 
-  const exactMatches = [
-    { skill: "Node.js / Express", note: "In skills + experience bullets" },
-    { skill: "Redis", note: "Skills + experience (Redis-coordinated architecture)" },
-    { skill: "MongoDB", note: "In skills + experience bullets" },
-    { skill: "AWS SQS / S3", note: "Explicitly mentioned in experience" },
-    { skill: "Microservices", note: "3-service chain refactor in experience" },
-  ];
-  const partialMatches = [
-    { skill: "Event-driven systems", note: "SQS-driven consumers + async patterns = strong implication", conf: "high" },
-    { skill: "Performance optimization", note: "85% latency reduction + 60 FPS mentioned directly", conf: "high" },
-    { skill: "CI/CD pipelines", note: "GCP automation + scheduled cleanup implies DevOps familiarity", conf: "medium" },
-    { skill: "TypeScript", note: "In skills list but not mentioned in experience bullets", conf: "medium" },
-  ];
-  const missing = ["Kubernetes", "GraphQL", "System Design (explicit)", "Leadership / Mentoring"];
+  const selectedJob = jobs.find(j => j.id === selectedJobId);
+  const analysis: AnalysisResult | undefined = selectedJobId ? analyses[selectedJobId] : undefined;
+  const isAnalyzing = analyzingJobId === selectedJobId;
 
-  const optimizedBullets = [
-    "Designed Redis-coordinated microservices architecture replacing 3-hop chain — reducing p95 API latency by 85% (2000ms → 300ms) and enabling horizontal scalability",
-    "Built async write-behind system for Continue Watching/Watch Later using AWS SQS, MongoDB, and Redis — sub-200ms perceived write latency with event-driven consumers",
-    "Architected React Native video feed sustaining 60 FPS; applied TypeScript strict mode and component-level profiling for sub-100ms interaction feedback",
-    "Deployed analytics pipelines for real-time revenue tracking and GCP cost monitoring — automated cleanup policies reduced orphaned resource spend",
-    "Implemented async job processing pipeline reducing blocking operations by 60%; scoped Redis-backed queue as next performance milestone",
-  ];
-
-  const keywords = [
-    { name: "Node.js / Express", pct: 100, stat: "5/5 ✓", color: "bg-emerald-500", statColor: "text-emerald-400" },
-    { name: "Redis", pct: 80, stat: "4/5 ✓", color: "bg-emerald-500", statColor: "text-emerald-400" },
-    { name: "TypeScript", pct: 80, stat: "4/5 (partial)", color: "bg-amber-500", statColor: "text-amber-400" },
-    { name: "MongoDB / PostgreSQL", pct: 80, stat: "4/5 ✓", color: "bg-emerald-500", statColor: "text-emerald-400" },
-    { name: "Microservices", pct: 60, stat: "3/5 ✓", color: "bg-emerald-500", statColor: "text-emerald-400" },
-    { name: "Kubernetes / Docker", pct: 60, stat: "3/5 (partial)", color: "bg-amber-500", statColor: "text-amber-400" },
-    { name: "GraphQL", pct: 40, stat: "2/5 missing", color: "bg-red-500", statColor: "text-red-400" },
-    { name: "System Design", pct: 40, stat: "2/5 missing", color: "bg-red-500", statColor: "text-red-400" },
-  ];
-
-  const confColor = (c: string) => c === "high" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : c === "medium" ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : "bg-red-500/10 text-red-400 border-red-500/20";
-
-  // Score ring math: circumference = 2π*44 ≈ 276. dashoffset = 276 * (1 - score/100)
-  const score = 82;
-  const circ = 276;
+  const score  = analysis?.score ?? 0;
+  const circ   = 276;
   const offset = circ * (1 - score / 100);
+  const ringColor = score >= 70 ? "#10B981" : score >= 50 ? "#F59E0B" : "#EF4444";
+
+  async function handleRunAnalysis() {
+    if (!selectedJobId) { showToast("Select a job first", "err"); return; }
+    if (!profileId)     { showToast("Save your profile first in Resume Builder", "err"); return; }
+    try {
+      showToast("Running AI analysis… (15–30s)", "info");
+      await runAnalysis(selectedJobId);
+      showToast("Analysis complete!", "ok");
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : "Analysis failed", "err");
+    }
+  }
+
+  const confColor = (c: string) =>
+    c === "high"   ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+    : c === "medium" ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+    :                  "bg-red-500/10 text-red-400 border-red-500/20";
+
+  const scoreDotColor = (s?: number) =>
+    !s           ? "bg-slate-600"
+    : s >= 70    ? "bg-emerald-500"
+    : s >= 50    ? "bg-amber-500"
+    :              "bg-red-500";
 
   return (
     <div className="max-w-5xl grid grid-cols-1 lg:grid-cols-[1fr_256px] gap-4 items-start">
+
+      {/* ── LEFT: main panel ── */}
       <div className="space-y-4">
-        {/* Main card */}
         <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-5">
+
+          {/* Header */}
           <div className="flex items-start justify-between mb-4">
             <div>
               <div className="text-sm font-bold text-white font-display flex items-center gap-2">
-                🔍 Mogi I/O · Software Dev Engineer I
+                🔍 {selectedJob ? `${selectedJob.company} · ${selectedJob.title}` : "Select a job →"}
               </div>
-              <div className="text-xs text-slate-500 mt-1 ml-5">Analyzed Jun 10, 2026 · Groq llama-3.1-8b-instant</div>
+              {analysis && (
+                <div className="text-xs text-slate-500 mt-1 ml-5">
+                  Score: {score}% · {analysis.matched_skills?.length ?? 0} exact ·{" "}
+                  {analysis.partial_matches?.length ?? 0} partial ·{" "}
+                  {analysis.missing_keywords?.length ?? 0} gaps
+                </div>
+              )}
             </div>
-            <button onClick={() => { showToast("Re-running analysis…", "info"); setTimeout(() => showToast("Analysis refreshed!", "ok"), 2200); }}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700 transition-all">
-              <RefreshCw size={11} /> Re-analyze
+            <button
+              onClick={handleRunAnalysis}
+              disabled={isAnalyzing || !selectedJobId}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700 transition-all disabled:opacity-50"
+            >
+              {isAnalyzing
+                ? <><Loader2 size={11} className="animate-spin" /> Analyzing…</>
+                : <><RefreshCw size={11} /> {analysis ? "Re-analyze" : "Run Analysis"}</>}
             </button>
           </div>
 
@@ -71,115 +85,204 @@ export function AnalyzerPage() {
           <div className="flex border-b border-slate-700 mb-4">
             {(["score", "optimized", "keywords"] as const).map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`px-3.5 py-2 text-xs font-bold border-b-2 transition-all capitalize font-display ${tab === t ? "text-indigo-400 border-indigo-500" : "text-slate-500 border-transparent hover:text-slate-300"}`}>
+                className={`px-3.5 py-2 text-xs font-bold border-b-2 transition-all capitalize font-display
+                  ${tab === t ? "text-indigo-400 border-indigo-500" : "text-slate-500 border-transparent hover:text-slate-300"}`}>
                 {t === "score" ? "Score Breakdown" : t === "optimized" ? "Optimized Bullets" : "Keyword Map"}
               </button>
             ))}
           </div>
 
-          {tab === "score" && (
-            <div className="space-y-5">
-              <div>
-                <div className="text-xs font-bold text-white font-display mb-2">Exact Matches <span className="text-emerald-400 font-normal">({exactMatches.length} skills)</span></div>
-                <div className="space-y-1.5">
-                  {exactMatches.map(m => (
-                    <div key={m.skill} className="flex items-center gap-2.5 px-3 py-2 bg-slate-700/40 rounded-lg">
-                      <CheckCircle size={13} className="text-emerald-400 shrink-0" />
-                      <div>
-                        <div className="text-xs font-semibold text-white">{m.skill}</div>
-                        <div className="text-[10.5px] text-slate-400 mt-0.5">{m.note}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs font-bold text-white font-display mb-2">Partial Matches <span className="text-amber-400 font-normal">({partialMatches.length} inferred)</span></div>
-                <div className="space-y-1.5">
-                  {partialMatches.map(m => (
-                    <div key={m.skill} className="flex items-center gap-2.5 px-3 py-2 bg-slate-700/40 rounded-lg">
-                      <AlertCircle size={13} className="text-amber-400 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-semibold text-white">{m.skill}</div>
-                        <div className="text-[10.5px] text-slate-400 mt-0.5">{m.note}</div>
-                      </div>
-                      <span className={`text-[9.5px] font-bold px-1.5 py-0.5 rounded-full border shrink-0 ${confColor(m.conf)}`}>{m.conf}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs font-bold text-white font-display mb-2">Missing <span className="text-red-400 font-normal">({missing.length} gaps)</span></div>
-                <div className="flex flex-wrap gap-1.5">
-                  {missing.map(m => (
-                    <span key={m} className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">{m}</span>
-                  ))}
-                </div>
-              </div>
+          {/* ── No job selected ── */}
+          {!selectedJobId && (
+            <div className="text-center py-12 text-slate-500 text-sm">
+              Add a job from Job Descriptions, then run analysis here.
             </div>
           )}
 
-          {tab === "optimized" && (
-            <div>
-              <p className="text-xs text-slate-400 mb-3 leading-relaxed">AI-rewritten bullets that include missing keywords while keeping all claims truthful.</p>
-              <div className="text-xs font-bold text-white font-display mb-2">SDE I · Mogi I/O</div>
-              <div className="space-y-2 mb-4">
-                {optimizedBullets.map((b, i) => (
-                  <div key={i} className="flex items-start gap-2 px-3 py-2.5 bg-slate-700/40 rounded-lg text-xs text-slate-300 leading-relaxed">
-                    <span className="text-emerald-400 text-xs mt-0.5 shrink-0">↗</span>{b}
-                  </div>
-                ))}
-              </div>
-              <div className="p-3 bg-emerald-500/8 border border-emerald-500/20 rounded-lg text-xs text-emerald-200 leading-relaxed mb-3">
-                <strong className="text-emerald-400 block mb-1">Recommended additions</strong>
-                Add Kubernetes (you have Docker — natural extension), mention TypeScript in bullets not just skills, add a line about code reviews if applicable.
-              </div>
-              <button onClick={() => showToast("Optimized bullets applied to resume!", "ok")}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg transition-all">
-                <CheckCircle size={12} /> Apply to Resume
+          {/* ── Loading ── */}
+          {isAnalyzing && (
+            <div className="text-center py-10">
+              <Loader2 size={28} className="text-indigo-400 animate-spin mx-auto mb-3" />
+              <div className="text-sm text-slate-400">AI is reading your resume and the job description…</div>
+              <div className="text-xs text-slate-500 mt-1">Gemini → Groq → Ollama fallback chain</div>
+            </div>
+          )}
+
+          {/* ── No analysis yet ── */}
+          {selectedJobId && !analysis && !isAnalyzing && (
+            <div className="text-center py-10">
+              <div className="text-slate-400 text-sm mb-3">No analysis yet for this job.</div>
+              <button
+                onClick={handleRunAnalysis}
+                disabled={!profileId}
+                className="flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white text-sm font-semibold rounded-lg transition-all mx-auto"
+              >
+                <Zap size={13} /> Run Analysis
               </button>
+              {!profileId && (
+                <div className="text-xs text-amber-400 mt-2">Save your profile first in Resume Builder</div>
+              )}
             </div>
           )}
 
-          {tab === "keywords" && (
-            <div>
-              <p className="text-xs text-slate-400 mb-4 leading-relaxed">Keyword frequency across all 5 tracked jobs.</p>
-              <div className="space-y-3">
-                {keywords.map(k => (
-                  <div key={k.name}>
-                    <div className="flex justify-between text-xs mb-1.5">
-                      <span className="text-slate-300">{k.name}</span>
-                      <span className={`font-bold ${k.statColor}`}>{k.stat}</span>
+          {/* ── Real analysis data ── */}
+          {analysis && !isAnalyzing && (
+            <>
+              {/* SCORE TAB */}
+              {tab === "score" && (
+                <div className="space-y-5">
+                  {/* Exact matches */}
+                  {(analysis.matched_skills?.length ?? 0) > 0 && (
+                    <div>
+                      <div className="text-xs font-bold text-white font-display mb-2">
+                        Exact Matches{" "}
+                        <span className="text-emerald-400 font-normal">({analysis.matched_skills.length} skills)</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        {analysis.matched_skills.map(skill => (
+                          <div key={skill} className="flex items-center gap-2.5 px-3 py-2 bg-slate-700/40 rounded-lg">
+                            <CheckCircle size={13} className="text-emerald-400 shrink-0" />
+                            <div className="text-xs font-semibold text-white">{skill}</div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
-                      <div className={`h-full ${k.color} rounded-full transition-all duration-700`} style={{ width: `${k.pct}%` }} />
+                  )}
+
+                  {/* Partial matches */}
+                  {(analysis.partial_matches?.length ?? 0) > 0 && (
+                    <div>
+                      <div className="text-xs font-bold text-white font-display mb-2">
+                        Partial Matches{" "}
+                        <span className="text-amber-400 font-normal">({analysis.partial_matches.length} inferred)</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        {analysis.partial_matches.map(m => (
+                          <div key={m.required} className="flex items-center gap-2.5 px-3 py-2 bg-slate-700/40 rounded-lg">
+                            <AlertCircle size={13} className="text-amber-400 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-semibold text-white">{m.required}</div>
+                              <div className="text-[10.5px] text-slate-400 mt-0.5">{m.note}</div>
+                            </div>
+                            <span className={`text-[9.5px] font-bold px-1.5 py-0.5 rounded-full border shrink-0 ${confColor(m.confidence)}`}>
+                              {m.confidence}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
+                  )}
+
+                  {/* Missing */}
+                  {(analysis.missing_keywords?.length ?? 0) > 0 && (
+                    <div>
+                      <div className="text-xs font-bold text-white font-display mb-2">
+                        Missing{" "}
+                        <span className="text-red-400 font-normal">({analysis.missing_keywords.length} gaps)</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {analysis.missing_keywords.map(m => (
+                          <span key={m} className="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">{m}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* OPTIMIZED TAB */}
+              {tab === "optimized" && analysis.optimized_resume && (
+                <div>
+                  <p className="text-xs text-slate-400 mb-3 leading-relaxed">
+                    AI-rewritten bullets that naturally include missing keywords while keeping all claims truthful.
+                  </p>
+                  {analysis.optimized_resume.experience?.map((exp, i) => (
+                    <div key={i} className="mb-4">
+                      <div className="text-xs font-bold text-white font-display mb-2">
+                        {exp.title} · {exp.company}
+                      </div>
+                      <div className="space-y-2">
+                        {exp.bullets.map((b, j) => (
+                          <div key={j} className="flex items-start gap-2 px-3 py-2.5 bg-slate-700/40 rounded-lg text-xs text-slate-300 leading-relaxed">
+                            <span className="text-emerald-400 mt-0.5 shrink-0">↗</span>{b}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {(analysis.optimized_resume.skills_to_learn?.length ?? 0) > 0 && (
+                    <div className="p-3 bg-emerald-500/8 border border-emerald-500/20 rounded-lg text-xs text-emerald-200 leading-relaxed mt-3">
+                      <strong className="text-emerald-400 block mb-1">Skills to learn next</strong>
+                      {analysis.optimized_resume.skills_to_learn.join(", ")}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* KEYWORD MAP TAB */}
+              {tab === "keywords" && (
+                <div>
+                  <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+                    Keyword presence in your resume for this job.
+                  </p>
+                  <div className="space-y-3">
+                    {analysis.matched_skills?.map(k => (
+                      <div key={k}>
+                        <div className="flex justify-between text-xs mb-1.5">
+                          <span className="text-slate-300">{k}</span>
+                          <span className="font-bold text-emerald-400">✓ matched</span>
+                        </div>
+                        <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-500 rounded-full w-full" />
+                        </div>
+                      </div>
+                    ))}
+                    {analysis.partial_matches?.map(m => (
+                      <div key={m.required}>
+                        <div className="flex justify-between text-xs mb-1.5">
+                          <span className="text-slate-300">{m.required}</span>
+                          <span className="font-bold text-amber-400">⚠ partial</span>
+                        </div>
+                        <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-amber-500 rounded-full w-3/5" />
+                        </div>
+                      </div>
+                    ))}
+                    {analysis.missing_keywords?.map(k => (
+                      <div key={k}>
+                        <div className="flex justify-between text-xs mb-1.5">
+                          <span className="text-slate-300">{k}</span>
+                          <span className="font-bold text-red-400">✗ missing</span>
+                        </div>
+                        <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-red-500 rounded-full w-1/5" />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+                </div>
+              )}
 
-        {/* Suggestions */}
-        <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-5">
-          <div className="text-sm font-bold text-white font-display mb-3">💡 Suggestions</div>
-          <div className="space-y-2.5">
-            {[
-              { area: "TypeScript in bullets", tip: "You list TypeScript as a skill but never mention it in experience. Add 'with TypeScript strict mode' to at least 2 bullets." },
-              { area: "Kubernetes", tip: "You have Docker and GCP infra experience. Adding Kubernetes (even basic cluster management) would unlock 3 more job matches." },
-              { area: "Leadership signal", tip: "Senior roles want evidence of mentoring or code review. If you do them, add 'conducted peer code reviews for 3-person team' type bullets." },
-            ].map(s => (
-              <div key={s.area} className="px-3.5 py-2.5 border-l-2 border-indigo-500 bg-slate-700/40 rounded-r-lg">
-                <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-wide font-display mb-1">{s.area}</div>
-                <div className="text-xs text-slate-300 leading-relaxed">{s.tip}</div>
-              </div>
-            ))}
-          </div>
+              {/* Suggestions */}
+              {(analysis.suggestions?.length ?? 0) > 0 && (
+                <div className="mt-5 pt-5 border-t border-slate-700">
+                  <div className="text-xs font-bold text-white font-display mb-3">💡 Suggestions</div>
+                  <div className="space-y-2.5">
+                    {analysis.suggestions.map(s => (
+                      <div key={s.area} className="px-3.5 py-2.5 border-l-2 border-indigo-500 bg-slate-700/40 rounded-r-lg">
+                        <div className="text-[10px] font-bold text-indigo-400 uppercase tracking-wide font-display mb-1">{s.area}</div>
+                        <div className="text-xs text-slate-300 leading-relaxed">{s.tip}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 
-      {/* Right sidebar */}
+      {/* ── RIGHT: score ring + job switcher ── */}
       <div className="space-y-4">
         {/* Score ring */}
         <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-5">
@@ -187,59 +290,95 @@ export function AnalyzerPage() {
             <div className="relative w-28 h-28">
               <svg className="rotate-[-90deg]" width="112" height="112" viewBox="0 0 112 112">
                 <circle cx="56" cy="56" r="44" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="7" />
-                <circle cx="56" cy="56" r="44" fill="none" stroke="#10B981" strokeWidth="7"
-                  strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" className="ring-fill" />
+                <circle cx="56" cy="56" r="44" fill="none"
+                  stroke={analysis ? ringColor : "rgba(255,255,255,0.06)"}
+                  strokeWidth="7"
+                  strokeDasharray={circ}
+                  strokeDashoffset={analysis ? offset : circ}
+                  strokeLinecap="round"
+                />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-extrabold text-white font-display leading-none">{score}</span>
+                <span className="text-3xl font-extrabold text-white font-display leading-none">
+                  {analysis ? score : "–"}
+                </span>
                 <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wide mt-0.5">Match</span>
               </div>
             </div>
-            <div className="text-xs text-slate-400 text-center mt-2 leading-relaxed">Strong match<br />5 exact · 4 partial · 4 gaps</div>
+            <div className="text-xs text-slate-400 text-center mt-2 leading-relaxed">
+              {analysis
+                ? `${analysis.matched_skills?.length ?? 0} exact · ${analysis.partial_matches?.length ?? 0} partial · ${analysis.missing_keywords?.length ?? 0} gaps`
+                : "Run analysis to see score"}
+            </div>
           </div>
-          <button onClick={() => { showToast("Re-running analysis…", "info"); setTimeout(() => showToast("Score updated!", "ok"), 2000); }}
-            className="flex items-center gap-1.5 w-full justify-center px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg transition-all">
-            <RefreshCw size={12} /> Re-analyze
+          <button
+            onClick={handleRunAnalysis}
+            disabled={isAnalyzing || !selectedJobId || !profileId}
+            className="flex items-center gap-1.5 w-full justify-center px-3 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-all"
+          >
+            {isAnalyzing
+              ? <><Loader2 size={12} className="animate-spin" /> Analyzing…</>
+              : <><Zap size={12} /> {analysis ? "Re-analyze" : "Run Analysis"}</>}
           </button>
         </div>
 
         {/* Job switcher */}
         <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-4">
           <div className="text-xs font-bold text-white font-display mb-3">All Jobs</div>
-          <div className="space-y-1.5">
-            {[
-              { name: "Mogi I/O · SDE I", score: 82, color: "bg-emerald-500", active: true },
-              { name: "StartupXYZ · Backend", score: 61, color: "bg-amber-500" },
-              { name: "Razorpay · Backend", score: 67, color: "bg-amber-500" },
-              { name: "Google · SWE", score: null, color: "bg-red-500" },
-            ].map(j => (
-              <div key={j.name} onClick={() => !j.active && showToast(`Loading ${j.name}…`, "info")}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all ${j.active ? "bg-indigo-500/12 border border-indigo-500/25" : "hover:bg-slate-700/50"}`}>
-                <div className={`w-1.5 h-1.5 rounded-full ${j.color} shrink-0`} />
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs font-semibold text-white truncate">{j.name}</div>
-                  <div className="text-[10px] text-slate-500">{j.score ? `${j.score}% match` : "Not analyzed"}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+          {jobs.length === 0 ? (
+            <div className="text-xs text-slate-500 text-center py-4">
+              No jobs yet. Add from Job Descriptions.
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              {jobs.map(j => {
+                const a = analyses[j.id];
+                const s = a?.score ?? j.score;
+                return (
+                  <div
+                    key={j.id}
+                    onClick={() => setSelectedJobId(j.id)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all
+                      ${selectedJobId === j.id
+                        ? "bg-indigo-500/12 border border-indigo-500/25"
+                        : "hover:bg-slate-700/50"}`}
+                  >
+                    <div className={`w-1.5 h-1.5 rounded-full ${scoreDotColor(s)} shrink-0`} />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-semibold text-white truncate">{j.company} · {j.title}</div>
+                      <div className="text-[10px] text-slate-500">
+                        {s !== undefined ? `${s}% match` : analyzingJobId === j.id ? "Analyzing…" : "Not analyzed"}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-// ─── JOBS PAGE ───────────────────────────────────────────────────────────────
+
+// ─── JOBS PAGE ─────────────────────────────────────────────────────────────
 export function JobsPage() {
-  const { jobs, addJob, removeJob, showToast } = useStore();
+  const { jobs, addJob, removeJob, showToast, isLoggedIn } = useStore();
+  const [submitting, setSub] = useState(false);
   const [form, setForm] = useState({ title: "", company: "", description: "" });
 
-  function submit() {
+  async function submit() {
     if (!form.title || !form.company) { showToast("Enter job title and company", "err"); return; }
-    addJob(form);
-    setForm({ title: "", company: "", description: "" });
-    showToast("Saved! Running AI analysis chain…", "info");
-    setTimeout(() => showToast("Analysis complete! Check Analyzer.", "ok"), 2500);
+    if (!form.description.trim())     { showToast("Paste the full job description", "err"); return; }
+    setSub(true);
+    try {
+      await addJob({ title: form.title, company: form.company, description: form.description });
+      setForm({ title: "", company: "", description: "" });
+      showToast("Job saved! Go to Analyzer to run AI analysis.", "ok");
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : "Failed to save job", "err");
+    } finally { setSub(false); }
   }
 
   const scoreBg = (s?: number) => !s ? "bg-slate-700/50 text-slate-400 border-slate-600" : s >= 70 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : s >= 50 ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : "bg-red-500/10 text-red-400 border-red-500/20";
@@ -268,8 +407,9 @@ export function JobsPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={submit} className="flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-lg transition-all">
-            <CheckCircle size={13} /> Save & Run Analysis
+          <button onClick={submit} disabled={submitting}
+            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-all">
+            {submitting ? <><Loader2 size={13} className="animate-spin" />Saving…</> : <><CheckCircle size={13} /> Save Job</>}
           </button>
           <button onClick={() => setForm({ title: "", company: "", description: "" })} className="px-4 py-2 border border-slate-600 text-slate-300 text-sm font-semibold rounded-lg hover:bg-slate-700 transition-all">Clear</button>
           <span className="text-xs text-slate-500 ml-1">Runs via Gemini → Groq → Ollama fallback chain</span>
@@ -302,7 +442,10 @@ export function JobsPage() {
                 className="flex-1 py-1.5 text-xs font-semibold bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-all">
                 {job.analyzed ? "View Analysis" : "Run Analysis"}
               </button>
-              <button onClick={() => { removeJob(job.id); showToast("Deleted", "ok"); }}
+              <button onClick={async () => {
+                  try { await removeJob(job.id); showToast("Deleted", "ok"); }
+                  catch { showToast("Delete failed — job has linked data", "err"); }
+                }}
                 className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
                 <XCircle size={14} />
               </button>

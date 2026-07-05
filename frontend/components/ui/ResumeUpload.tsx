@@ -51,18 +51,54 @@ export default function ResumeUpload() {
       // ── Step 2: Send URL to Express backend → AI parses it ──
       const parsed = await profileApi.parseFromUrl(uploadData.url, uploadData.fileType);
 
-      // ── Step 3: Merge parsed fields into local profile state ──
+      // ── Step 3: Merge ALL parsed fields into local profile state ──
       if (parsed.resume_data) {
         const r = parsed.resume_data as {
-          name?: string; email?: string; phone?: string;
+          name?: string; email?: string; phone?: string; location?: string;
           summary?: string; skills?: string[];
+          experience?: Array<{ company: string; title: string; start: string; end: string; bullets: string[] }>;
+          education?: Array<{ institution: string; degree: string; field: string; year: string }>;
+          projects?: Array<{ name: string; description: string; tech: string[] }>;
+          achievements?: string[];
         };
+
+        // Map AI experience → store Experience shape
+        const mappedExp = r.experience?.map((e, i) => ({
+          id:      `exp-parsed-${i}-${Date.now()}`,
+          title:   e.title   || "",
+          company: e.company || "",
+          start:   e.start   || "",
+          end:     e.end === "Present" ? "" : (e.end || ""),
+          current: e.end === "Present",
+          // bullets array → newline-joined string for the textarea
+          bullets: Array.isArray(e.bullets) ? e.bullets.join("\n") : "",
+        })) ?? [];
+
+        // Map AI projects → store Project shape
+        const mappedProjects = r.projects?.map((p, i) => ({
+          id:    `proj-parsed-${i}-${Date.now()}`,
+          name:  p.name        || "",
+          year:  "",
+          stack: Array.isArray(p.tech) ? p.tech.join(", ") : "",
+          desc:  p.description || "",
+          url:   "",
+        })) ?? [];
+
+        // Education (take first entry if multiple)
+        const edu = r.education?.[0];
+
         updateProfile({
-          ...(r.name    && { name: r.name }),
-          ...(r.email   && { email: r.email }),
-          ...(r.phone   && { phone: r.phone }),
+          ...(r.name    && { name:    r.name    }),
+          ...(r.email   && { email:   r.email   }),
+          ...(r.phone   && { phone:   r.phone   }),
           ...(r.summary && { summary: r.summary }),
-          ...(r.skills?.length && { skills: r.skills }),
+          ...(r.skills?.length  && { skills:     r.skills      }),
+          ...(mappedExp.length  && { experience: mappedExp     }),
+          ...(mappedProjects.length && { projects: mappedProjects }),
+          ...(edu?.degree      && { degree:   edu.degree                      }),
+          ...(edu?.institution && { school:   edu.institution                 }),
+          ...(edu?.year        && { eduStart: edu.year.split("–")[0]?.trim()  }),
+          ...(edu?.year        && { eduEnd:   edu.year.split("–")[1]?.trim() ?? "" }),
         });
       }
 

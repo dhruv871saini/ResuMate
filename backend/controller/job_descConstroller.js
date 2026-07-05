@@ -10,7 +10,7 @@ export const createDescription = async (req, res) => {
     }
 
     const jd = await job_descriptionModel.createJob_desc(userId, title, company_name, description);
-    return res.status(201).json({ message: 'Job description created', jd });
+    return res.status(201).json({ message: 'Job description created', job: jd });
   } catch (error) {
     console.error('Error in createDescription:', error);
     return res.status(500).json({ message: 'Server error' });
@@ -53,8 +53,8 @@ export const deleteDescription = async (req, res) => {
 export const getAllDescriptions = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const jds = await job_descriptionModel.getAllJob_desc(userId);
-    return res.status(200).json({ message: 'Job descriptions fetched', jds });
+    const jds = await job_descriptionModel.getAllDescriptions(userId);
+    return res.status(200).json({ message: 'Job descriptions fetched', jobs: jds });
   } catch (error) {
     console.error('Error in getAllDescriptions:', error);
     return res.status(500).json({ message: 'Server error' });

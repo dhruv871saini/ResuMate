@@ -2,6 +2,7 @@ import express from "express"
 import jwt from "jsonwebtoken"
 
 const authMiddleware = (req, res, next) => {
+    console.log("78")
     const authheader = req.headers.authorization;
     if (!authheader) {
         return res.status(401).json({ message: "unauthorized token not provided" })

@@ -6,7 +6,7 @@ import ResumeRenderer from "@/components/resume/ResumeRenderer";
 import ResumeUpload from "@/components/ui/ResumeUpload";
 import { downloadPDF } from "@/lib/api";
 
-const TEMPLATES = ["modern", "classic", "purple", "minimal"] as const;
+const TEMPLATES = ["modern", "classic", "executive", "minimal"] as const;
 const TABS = ["Personal Info", "Experience", "Skills", "Projects", "Education & Certs", "Preview & Export"] as const;
 
 function TemplateSwitch() {
@@ -264,7 +264,20 @@ function ProjectsTab() {
 }
 
 function EducationTab() {
-  const { profile, updateProfile, addCertification, updateCertification, removeCertification, showToast } = useStore();
+  const { profile, updateProfile, addCertification, updateCertification, removeCertification, showToast, saveProfileToBackend, isLoggedIn } = useStore();
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave() {
+    if (!isLoggedIn) { showToast("Sign in to save", "err"); return; }
+    setSaving(true);
+    try {
+      await saveProfileToBackend();
+      showToast("Education & certs saved!", "ok");
+    } catch (e: unknown) {
+      showToast(e instanceof Error ? e.message : "Save failed", "err");
+    } finally { setSaving(false); }
+  }
+
   return (
     <div className="space-y-4">
       <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5">
@@ -307,7 +320,7 @@ function EducationTab() {
           ))}
         </div>
       </div>
-      <button onClick={() => showToast("Education & certs saved!", "ok")} className="flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-lg transition-all">
+      <button onClick={handleSave} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-all">
         {saving ? <><Loader2 size={14} className="animate-spin"/>Saving…</> : <><CheckSquare size={14}/> Save & Sync</>}
       </button>
     </div>
@@ -340,12 +353,27 @@ function PreviewExportTab() {
       setPdfLoading(false);
     }
   }
+  // Compute ATS readiness from real profile data
+  const { profile: p } = useStore();
+  const contactFields   = [p.name, p.email, p.phone, p.linkedin].filter(Boolean).length;
+  const contactPct      = Math.round((contactFields / 4) * 100);
+  const allBullets      = p.experience.flatMap(e => e.bullets.split("\n").filter(Boolean));
+  const actionVerbs     = ["built","led","designed","developed","improved","reduced","increased","launched","managed","shipped","implemented","optimized","created","delivered","architected"];
+  const actionPct       = allBullets.length
+    ? Math.round((allBullets.filter(b => actionVerbs.some(v => b.toLowerCase().startsWith(v))).length / allBullets.length) * 100)
+    : 0;
+  const quantPct        = allBullets.length
+    ? Math.round((allBullets.filter(b => /\d/.test(b)).length / allBullets.length) * 100)
+    : 0;
+  const skillsPct       = Math.min(100, Math.round((p.skills.length / 10) * 100));
+  const summaryPct      = p.summary.length > 100 ? 100 : Math.round((p.summary.length / 100) * 100);
+
   const readiness = [
-    { label: "Keyword density", pct: 84, color: "bg-emerald-500", status: "Strong", statusColor: "text-emerald-400" },
-    { label: "Action verbs", pct: 92, color: "bg-emerald-500", status: "Excellent", statusColor: "text-emerald-400" },
-    { label: "Quantified results", pct: 63, color: "bg-amber-500", status: "5/8 bullets", statusColor: "text-amber-400" },
-    { label: "Contact completeness", pct: 100, color: "bg-emerald-500", status: "Complete", statusColor: "text-emerald-400" },
-    { label: "Resume length", pct: 95, color: "bg-emerald-500", status: "1 page", statusColor: "text-emerald-400" },
+    { label: "Contact completeness", pct: contactPct, color: contactPct === 100 ? "bg-emerald-500" : "bg-amber-500", status: `${contactFields}/4 fields`, statusColor: contactPct === 100 ? "text-emerald-400" : "text-amber-400" },
+    { label: "Skills listed",        pct: skillsPct,  color: skillsPct  >= 70  ? "bg-emerald-500" : "bg-amber-500", status: `${p.skills.length} skills`,  statusColor: skillsPct  >= 70  ? "text-emerald-400" : "text-amber-400" },
+    { label: "Action verbs",         pct: actionPct,  color: actionPct  >= 60  ? "bg-emerald-500" : "bg-amber-500", status: `${actionPct}% of bullets`,  statusColor: actionPct  >= 60  ? "text-emerald-400" : "text-amber-400" },
+    { label: "Quantified results",   pct: quantPct,   color: quantPct   >= 50  ? "bg-emerald-500" : "bg-amber-500", status: `${quantPct}% of bullets`,   statusColor: quantPct   >= 50  ? "text-emerald-400" : "text-amber-400" },
+    { label: "Summary written",      pct: summaryPct, color: summaryPct === 100 ? "bg-emerald-500" : "bg-amber-500", status: summaryPct === 100 ? "Complete" : "Too short", statusColor: summaryPct === 100 ? "text-emerald-400" : "text-amber-400" },
   ];
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-5">
@@ -391,8 +419,14 @@ function PreviewExportTab() {
         <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-4">
           <div className="text-xs font-bold text-white font-display mb-3">💡 Quick Improvements</div>
           <div className="space-y-2 text-xs">
-            <div className="p-2.5 bg-amber-500/8 border border-amber-500/20 rounded-lg text-amber-200 leading-relaxed">Add certifications to boost scores on 3 tracked jobs</div>
-            <div className="p-2.5 bg-indigo-500/8 border border-indigo-500/20 rounded-lg text-indigo-200 leading-relaxed">Mention TypeScript explicitly in experience bullets, not just skills</div>
+            {contactPct < 100 && <div className="p-2.5 bg-amber-500/8 border border-amber-500/20 rounded-lg text-amber-200 leading-relaxed">Add your LinkedIn and phone number to complete your contact info.</div>}
+            {p.certifications.length === 0 && <div className="p-2.5 bg-amber-500/8 border border-amber-500/20 rounded-lg text-amber-200 leading-relaxed">Add certifications (AWS, Docker, GCP) to boost ATS scores on specialized roles.</div>}
+            {actionPct < 60 && <div className="p-2.5 bg-indigo-500/8 border border-indigo-500/20 rounded-lg text-indigo-200 leading-relaxed">Start more bullet points with action verbs like Built, Led, Improved, Delivered.</div>}
+            {quantPct < 50 && <div className="p-2.5 bg-indigo-500/8 border border-indigo-500/20 rounded-lg text-indigo-200 leading-relaxed">Add numbers to your bullets — e.g. "reduced latency by 40%" or "led a team of 5".</div>}
+            {p.skills.length < 5 && <div className="p-2.5 bg-red-500/8 border border-red-500/20 rounded-lg text-red-200 leading-relaxed">Add at least 8–10 skills to the Skills tab to improve ATS keyword matching.</div>}
+            {contactPct === 100 && p.certifications.length > 0 && actionPct >= 60 && quantPct >= 50 && p.skills.length >= 5 && (
+              <div className="p-2.5 bg-emerald-500/8 border border-emerald-500/20 rounded-lg text-emerald-200 leading-relaxed">✓ Great profile! Run an analysis to see how it matches your target jobs.</div>
+            )}
           </div>
         </div>
       </div>
