@@ -1,7 +1,13 @@
-import pool from '../config/postgre.js';
+import pool from "../config/postgre.js";
 
 async function initializeDatabase() {
   try {
+    await pool.query(`
+      CREATE EXTENSION IF NOT EXISTS pgcrypto;
+    `);
+
+    console.log(" pgcrypto extension enabled");
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -13,94 +19,106 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log(' Users table created successfully');
 
+    console.log(" Users table created successfully");
 
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS profiles (
+      CREATE TABLE IF NOT EXISTS profiles (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        user_id UUID  REFERENCES users(id), 
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         resume_data JSONB,
-        raw_text TEXT,                      
-        resume_file_url VARCHAR(255),       
-        resume_public_id VARCHAR(255),      
-        original_filename VARCHAR(255),     
+        raw_text TEXT,
+        resume_file_url VARCHAR(255),
+        resume_public_id VARCHAR(255),
+        original_filename VARCHAR(255),
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
     `);
-    console.log(' Resumes table created successfully');
 
+    console.log(" Profiles table created successfully");
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS job_descriptions (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-      title VARCHAR(255) NOT NULL,
-      company_name VARCHAR(255) NOT NULL,
-      description TEXT NOT NULL,
-      extracted_data JSONB,
-      created_at TIMESTAMP DEFAULT NOW(),
-      updated_at TIMESTAMP DEFAULT NOW()
-    );
-  `);
-    console.log(' job_description table created successfully ')
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        title VARCHAR(255) NOT NULL,
+        company_name VARCHAR(255) NOT NULL,
+        description TEXT NOT NULL,
+        extracted_data JSONB,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
 
+    console.log(" Job descriptions table created successfully");
 
     await pool.query(`
-    CREATE TABLE IF NOT EXISTS conversations (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-      job_description_id UUID REFERENCES job_descriptions(id) ON DELETE CASCADE,
-      profile_id UUID REFERENCES profiles(id),
-      prompt TEXT NOT NULL,
-      response TEXT NOT NULL,
-      model_used VARCHAR(50) DEFAULT 'gemini-1.5-flash',
-      tokens_used INT,
-      created_at TIMESTAMP DEFAULT NOW()
-    );
-    
-    CREATE INDEX IF NOT EXISTS idx_conversations_user_id ON conversations(user_id);
-    CREATE INDEX IF NOT EXISTS idx_conversations_created_at ON conversations(created_at);
-  `);
-  console.log('✓ Conversations table added');
+      CREATE TABLE IF NOT EXISTS conversations (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        job_description_id UUID REFERENCES job_descriptions(id) ON DELETE CASCADE,
+        profile_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+        prompt TEXT NOT NULL,
+        response TEXT NOT NULL,
+        model_used VARCHAR(50) DEFAULT 'gemini-1.5-flash',
+        tokens_used INT,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
 
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_conversations_user_id
+      ON conversations(user_id);
+    `);
 
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_conversations_created_at
+      ON conversations(created_at);
+    `);
 
-  await pool.query(`
-   CREATE TABLE IF NOT EXISTS analyses (
-      id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id           UUID REFERENCES users(id) ON DELETE CASCADE,
-      profile_id        UUID REFERENCES profiles(id) ON DELETE CASCADE,
-      job_desc_id       UUID REFERENCES job_descriptions(id) ON DELETE CASCADE,
+    console.log("✓ Conversations table created successfully");
 
-      jd_analysis       JSONB,
-      score             INTEGER,
-      match_data        JSONB,
-      optimized_content JSONB,
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS analyses (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+        job_desc_id UUID REFERENCES job_descriptions(id) ON DELETE CASCADE,
 
-      model_used        VARCHAR(50) DEFAULT 'gemini-1.5-flash',
+        jd_analysis JSONB,
+        score INTEGER,
+        match_data JSONB,
+        optimized_content JSONB,
 
-      pdf_url           TEXT,
-      pdf_template      VARCHAR(255),
-      pdf_created_at    TIMESTAMP,
+        model_used VARCHAR(50) DEFAULT 'gemini-1.5-flash',
 
-      created_at        TIMESTAMP DEFAULT NOW(),
-      updated_at        TIMESTAMP DEFAULT NOW(),
+        pdf_url TEXT,
+        pdf_template VARCHAR(255),
+        pdf_created_at TIMESTAMP,
 
-      UNIQUE(profile_id, job_desc_id)
-    );
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW(),
 
-    CREATE INDEX IF NOT EXISTS idx_analyses_user_id  ON analyses(user_id);
-    CREATE INDEX IF NOT EXISTS idx_analyses_profile_job  ON analyses(profile_id, job_desc_id);
-  `);
-  console.log('✓ analyses table created');
+        UNIQUE(profile_id, job_desc_id)
+      );
+    `);
 
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_analyses_user_id
+      ON analyses(user_id);
+    `);
 
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_analyses_profile_job
+      ON analyses(profile_id, job_desc_id);
+    `);
 
+    console.log(" Analyses table created successfully");
 
+    console.log(" Database initialized successfully!");
   } catch (error) {
-    console.error('✗ Error creating table:', error);
+    console.error("✗ Error creating database:", error);
   } finally {
     await pool.end();
   }
