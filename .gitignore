@@ -3,22 +3,3 @@ node_modules/
 .env.local
 dist/
 build/
-
-
-
-
-
-
-
-
-
-ats builder page are hard coded 
-
-upload resume and parse resume but it fullfill automatically few basic it cannot fullfill the experience and project 
-
-jd deletion api dont call 
-
-and many more stupid bug 
-
-
-for future deploy on vercel and render also neon
