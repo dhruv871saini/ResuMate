@@ -6,6 +6,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ThemeProvider from "@/components/ui/ThemeProvider";
+import AppBackground from "@/components/ui/AppBackground";
+
+const backgroundImageUrl = process.env.NEXT_PUBLIC_BACKGROUND_IMAGE_URL?.trim() || undefined;
 
 export const metadata: Metadata = {
   title: "Resumate — ATS Resume Optimizer",
@@ -23,7 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body className={backgroundImageUrl ? "bg-transparent" : undefined}>
+        <AppBackground url={backgroundImageUrl} />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

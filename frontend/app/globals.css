@@ -10,21 +10,32 @@
   --font-display: "Syne", sans-serif;
   --font-serif:   "Playfair Display", serif;
 
-  /* Custom colors */
-  --color-ink:         #0A0F1E;
-  --color-ink-2:       #111827;
-  --color-ink-3:       #1E293B;
-  --color-surface:     #1E293B;
-  --color-surface-2:   #253347;
-  --color-surface-3:   #2D3E57;
-  --color-accent:      #6366F1;
-  --color-accent-hover:#4F46E5;
-  --color-accent-soft: #818CF8;
-  --color-accent-muted:rgba(99,102,241,0.12);
+  /* Vibrant dark palette — violet-tinted backgrounds, no blue */
+  --color-ink:         #0D0814;
+  --color-ink-2:       #140F1E;
+  --color-ink-3:       #1C1528;
+  --color-surface:     #221A30;
+  --color-surface-2:   #2A2040;
+  --color-surface-3:   #322850;
+  --color-accent:      #D946EF;
+  --color-accent-hover:#C026D3;
+  --color-accent-soft: #F0ABFC;
+  --color-accent-muted:rgba(217,70,239,0.12);
+  --color-indigo-50:   #FAF5FF;
+  --color-indigo-100:  #F3E8FF;
+  --color-indigo-200:  #E9D5FF;
+  --color-indigo-300:  #D8B4FE;
+  --color-indigo-400:  #C084FC;
+  --color-indigo-500:  #A855F7;
+  --color-indigo-600:  #9333EA;
+  --color-indigo-700:  #7E22CE;
+  --color-indigo-800:  #6B21A8;
+  --color-indigo-900:  #581C87;
+  --color-indigo-950:  #3B0764;
 
   /* Box shadows */
-  --shadow-glow: 0 0 0 1px #6366F1;
-  --shadow-card: 0 4px 24px rgba(0,0,0,0.25);
+  --shadow-glow: 0 0 0 1px #D946EF;
+  --shadow-card: 0 4px 24px rgba(13,8,20,0.5);
 }
 
 /* Dark mode via .dark class on <html> */
@@ -40,14 +51,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Dark mode background */
-.dark body { background: #0A0F1E; color: #F1F5F9; }
+/* Dark mode background — deep violet-black */
+.dark body { background: #0D0814; color: #F1F5F9; }
 
 /* ── Scrollbar ────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(217,70,239,0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(217,70,239,0.3); }
 
 /* ── Custom component classes ─────────────────────────────── */
 
@@ -65,14 +76,14 @@ body {
 .chip-input:focus { outline: none; }
 
 /* Skill box focus ring */
-.skill-box:focus-within { border-color: #6366F1; }
+.skill-box:focus-within { border-color: #D946EF; }
 
 /* CSS custom properties for components that reference these directly */
 :root {
-  --accent:   #6366F1;
-  --accent-h: #4F46E5;
-  --accent-s: #818CF8;
+  --accent:   #D946EF;
+  --accent-h: #C026D3;
+  --accent-s: #F0ABFC;
   --ok:       #10B981;
-  --warn:     #F59E0B;
+  --warn:     #A3E635;
   --err:      #EF4444;
 }

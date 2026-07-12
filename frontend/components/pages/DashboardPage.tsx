@@ -40,7 +40,7 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
 
   const scoreBg = (s: number) =>
     s >= 70 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-    : s >= 50 ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+    : s >= 50 ? "bg-lime-500/10 text-lime-400 border-lime-500/20"
     : "bg-red-500/10 text-red-400 border-red-500/20";
 
   const isProfileEmpty = !profile.name && profile.skills.length === 0;
@@ -51,12 +51,12 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
     return (
       <div className="max-w-2xl mx-auto">
         {/* Welcome card */}
-        <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-8 mb-5 text-center">
-          <div className="w-14 h-14 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400 mx-auto mb-4">
+        <div className="bg-surface/60 border border-violet-900/60 rounded-2xl p-8 mb-5 text-center">
+          <div className="w-14 h-14 bg-fuchsia-500/10 border border-fuchsia-500/20 rounded-2xl flex items-center justify-center text-fuchsia-400 mx-auto mb-4">
             <TrendingUp size={26} />
           </div>
           <h2 className="font-display font-bold text-2xl text-white mb-2">
-            Welcome, {firstName}! 👋
+            Welcome, {firstName}! 
           </h2>
           <p className="text-slate-400 text-sm leading-relaxed max-w-md mx-auto">
             Let's get your profile set up so AI can start matching you to jobs and generating
@@ -92,10 +92,10 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
               className={`flex items-start gap-4 p-5 rounded-xl border cursor-pointer transition-all group
                 ${done
                   ? "bg-emerald-500/5 border-emerald-500/20"
-                  : "bg-slate-800/50 border-slate-700/50 hover:border-indigo-500/50"}`}
+                  : "bg-surface/50 border-violet-900/50 hover:border-fuchsia-500/50"}`}
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm font-bold font-display
-                ${done ? "bg-emerald-500/10 text-emerald-400" : "bg-indigo-500/10 text-indigo-400"}`}>
+                ${done ? "bg-emerald-500/10 text-emerald-400" : "bg-fuchsia-500/10 text-fuchsia-400"}`}>
                 {done ? <CheckCircle size={18} /> : step}
               </div>
               <div className="flex-1 min-w-0">
@@ -103,7 +103,7 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
                 <div className="text-xs text-slate-400 leading-relaxed">{sub}</div>
               </div>
               {!done && (
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-indigo-400 shrink-0 group-hover:gap-2.5 transition-all">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-fuchsia-400 shrink-0 group-hover:gap-2.5 transition-all">
                   {action} <ArrowRight size={12} />
                 </div>
               )}
@@ -123,14 +123,14 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
     <div className="max-w-5xl">
 
       {/* Welcome bar */}
-      <div className="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 mb-5 relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-48 h-full bg-gradient-to-l from-indigo-500/5 to-transparent pointer-events-none" />
+      <div className="bg-surface/60 border border-violet-900/60 rounded-2xl p-6 mb-5 relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-48 h-full bg-gradient-to-l from-fuchsia-500/5 to-transparent pointer-events-none" />
         <h2 className="font-display font-bold text-xl text-white mb-1">
           Good to see you, {firstName} 👋
         </h2>
         <p className="text-sm text-slate-400 max-w-lg leading-relaxed">
           Profile is{" "}
-          <span className="text-indigo-400 font-semibold">{completePct}% complete</span>.
+          <span className="text-fuchsia-400 font-semibold">{completePct}% complete</span>.
           {completePct < 100 && " Fill in the remaining sections to improve your ATS scores."}
           {bestScore > 0 && (
             <> Your best match is{" "}
@@ -142,7 +142,7 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
         <div className="flex gap-2 mt-4 flex-wrap">
           <button
             onClick={() => goTo("analyzer")}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-fuchsia-500 hover:bg-fuchsia-600 text-white text-xs font-semibold rounded-lg transition-all"
           >
             <BarChart2 size={12} /> View Analyses
           </button>
@@ -156,16 +156,16 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
       </div>
 
       {/* Profile completeness */}
-      <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3.5 mb-5">
+      <div className="bg-surface/50 border border-violet-900/50 rounded-xl px-4 py-3.5 mb-5">
         <div className="flex justify-between items-center mb-2">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wide font-display">
             Profile completeness
           </span>
-          <span className="text-sm font-bold text-indigo-400 font-display">{completePct}%</span>
+          <span className="text-sm font-bold text-fuchsia-400 font-display">{completePct}%</span>
         </div>
-        <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden mb-3">
+        <div className="h-1.5 bg-surface-2 rounded-full overflow-hidden mb-3">
           <div
-            className="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full transition-all duration-700"
+            className="h-full bg-gradient-to-r from-fuchsia-500 to-fuchsia-400 rounded-full transition-all duration-700"
             style={{ width: `${completePct}%` }}
           />
         </div>
@@ -195,7 +195,7 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
             label: "Avg Score",
             value: avgScore ? `${avgScore}%` : "—",
             sub: `Across ${analyzedJobs.length} ${analyzedJobs.length === 1 ? "analysis" : "analyses"}`,
-            color: avgScore >= 60 ? "text-amber-400" : "text-slate-300",
+            color: avgScore >= 60 ? "text-lime-400" : "text-slate-300",
           },
           {
             label: "Jobs Tracked",
@@ -210,7 +210,7 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
             color: "text-white",
           },
         ].map(k => (
-          <div key={k.label} className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+          <div key={k.label} className="bg-surface/50 border border-violet-900/50 rounded-xl p-4">
             <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-display mb-1.5">
               {k.label}
             </div>
@@ -227,7 +227,7 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
         <div className="text-sm font-bold text-white font-display">Recent Job Analyses</div>
         <button
           onClick={() => goTo("analyzer")}
-          className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+          className="text-xs text-fuchsia-400 hover:text-fuchsia-300 transition-colors"
         >
           View all →
         </button>
@@ -238,11 +238,11 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
           <div
             key={job.id}
             onClick={() => goTo("analyzer")}
-            className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 cursor-pointer hover:border-indigo-500/50 transition-all relative"
+            className="bg-surface/50 border border-violet-900/50 rounded-xl p-4 cursor-pointer hover:border-fuchsia-500/50 transition-all relative"
           >
             <div className={`absolute top-3 right-3 w-2 h-2 rounded-full ${job.analyzed ? "bg-emerald-500" : "bg-slate-600"}`} />
             <div className="flex gap-2.5 mb-3 items-start">
-              <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-xs font-bold text-white font-display shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-fuchsia-500 flex items-center justify-center text-xs font-bold text-white font-display shrink-0">
                 {job.company[0]?.toUpperCase()}
               </div>
               <div>
@@ -262,9 +262,9 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
         {jobs.length < 2 && (
           <div
             onClick={() => goTo("jobs")}
-            className="bg-slate-800/30 border border-dashed border-slate-700 rounded-xl p-4 cursor-pointer hover:border-indigo-500/50 transition-all flex flex-col items-center justify-center gap-2"
+            className="bg-surface/30 border border-dashed border-violet-900/50 rounded-xl p-4 cursor-pointer hover:border-fuchsia-500/50 transition-all flex flex-col items-center justify-center gap-2"
           >
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+            <div className="w-8 h-8 rounded-lg bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-400">
               <Plus size={16} />
             </div>
             <div className="text-xs font-semibold text-slate-400">Add new job</div>
@@ -278,7 +278,7 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
           <div className="text-sm font-bold text-white font-display mb-3">
             Skills Gap — Across All Jobs
           </div>
-          <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-5">
+          <div className="bg-surface/50 border border-violet-900/50 rounded-xl p-5">
             <div className="space-y-3">
               {topGaps.map(([skill, count]) => {
                 const pct = Math.round((count / jobs.length) * 100);
@@ -286,13 +286,13 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
                   <div key={skill}>
                     <div className="flex justify-between text-xs mb-1.5">
                       <span className="text-slate-300">{skill}</span>
-                      <span className="font-bold text-amber-400">
+                      <span className="font-bold text-lime-400">
                         Missing in {count}/{jobs.length} job{count > 1 ? "s" : ""}
                       </span>
                     </div>
-                    <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                    <div className="h-1 bg-surface-2 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-amber-500 rounded-full transition-all duration-700"
+                        className="h-full bg-lime-500 rounded-full transition-all duration-700"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -309,8 +309,8 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
 
       {/* Prompt to analyze if no analyses yet */}
       {jobs.length > 0 && analyzedJobs.length === 0 && (
-        <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-xl p-5 flex items-start gap-4">
-          <div className="w-9 h-9 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0">
+        <div className="bg-fuchsia-500/5 border border-fuchsia-500/20 rounded-xl p-5 flex items-start gap-4">
+          <div className="w-9 h-9 rounded-xl bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-400 shrink-0">
             <BarChart2 size={18} />
           </div>
           <div className="flex-1">
@@ -322,7 +322,7 @@ export default function DashboardPage({ goTo }: { goTo: NavigateFn }) {
           </div>
           <button
             onClick={() => goTo("analyzer")}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg transition-all shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-fuchsia-500 hover:bg-fuchsia-600 text-white text-xs font-semibold rounded-lg transition-all shrink-0"
           >
             Analyze <ArrowRight size={11} />
           </button>

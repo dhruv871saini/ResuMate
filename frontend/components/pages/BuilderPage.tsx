@@ -15,7 +15,7 @@ function TemplateSwitch() {
     <div className="flex gap-1.5 flex-wrap">
       {TEMPLATES.map(t => (
         <button key={t} onClick={() => setTemplate(t)}
-          className={`px-2.5 py-1 text-xs font-semibold rounded-md border transition-all capitalize ${activeTemplate === t ? "bg-indigo-500 text-white border-indigo-500" : "border-slate-600 text-slate-400 hover:border-slate-400 hover:text-slate-200"}`}>
+          className={`px-2.5 py-1 text-xs font-semibold rounded-md border transition-all capitalize ${activeTemplate === t ? "bg-violet-500 text-white border-violet-500" : "border-violet-800/50 text-slate-400 hover:border-slate-400 hover:text-slate-200"}`}>
           {t}
         </button>
       ))}
@@ -28,7 +28,7 @@ function PreviewPanel() {
     <div className="sticky top-0">
       <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 font-display">Live Preview</div>
       <TemplateSwitch />
-      <div className="mt-2.5 bg-slate-900 rounded-xl p-3 max-h-[calc(100vh-160px)] overflow-y-auto">
+      <div className="mt-2.5 bg-ink-2 rounded-xl p-3 max-h-[calc(100vh-160px)] overflow-y-auto">
         <div style={{ transform: "scale(0.7)", transformOrigin: "top center", width: "143%", marginLeft: "-21.5%" }}>
           <ResumeRenderer />
         </div>
@@ -43,7 +43,7 @@ function Input({ label, value, onChange, placeholder, className = "" }: { label:
       <label className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">{label}</label>
       <input value={value} onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors w-full" />
+        className="bg-surface border border-violet-800/50 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-violet-500 transition-colors w-full" />
     </div>
   );
 }
@@ -53,7 +53,7 @@ function Textarea({ label, value, onChange, placeholder, rows = 4 }: { label: st
     <div className="flex flex-col gap-1">
       <label className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">{label}</label>
       <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows}
-        className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors resize-y w-full leading-relaxed" />
+        className="bg-surface border border-violet-800/50 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-violet-500 transition-colors resize-y w-full leading-relaxed" />
     </div>
   );
 }
@@ -76,9 +76,9 @@ function PersonalTab() {
   return (
     <div>
       <ResumeUpload />
-      <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5 mb-3">
+      <div className="bg-surface/60 border border-violet-900/50 rounded-xl p-5 mb-3">
         <div className="text-sm font-bold text-white font-display mb-4 flex items-center gap-2">
-          <span className="w-5 h-5 rounded-md bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-xs">👤</span>
+          <span className="w-5 h-5 rounded-md bg-violet-500/20 flex items-center justify-center text-violet-400 text-xs">👤</span>
           Personal Information
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -94,7 +94,7 @@ function PersonalTab() {
         </div>
       </div>
       <button onClick={handleSave} disabled={saving}
-        className="flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-semibold rounded-lg transition-all">
+        className="flex items-center gap-1.5 px-4 py-2 bg-violet-500 hover:bg-violet-600 text-white text-sm font-semibold rounded-lg transition-all">
         {saving ? <><Loader2 size={14} className="animate-spin"/>Saving…</> : <><CheckSquare size={14}/> Save & Sync</>}
       </button>
     </div>
@@ -105,18 +105,18 @@ function ExperienceTab() {
   const { profile, addExperience, updateExperience, removeExperience } = useStore();
   return (
     <div>
-      <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5 mb-3">
+      <div className="bg-surface/60 border border-violet-900/50 rounded-xl p-5 mb-3">
         <div className="flex items-center justify-between mb-4">
           <div className="text-sm font-bold text-white font-display flex items-center gap-2">
-            <span className="text-indigo-400">💼</span> Work Experience
+            <span className="text-violet-400">💼</span> Work Experience
           </div>
-          <button onClick={addExperience} className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700 transition-all">
+          <button onClick={addExperience} className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold border border-violet-800/50 text-slate-300 rounded-lg hover:bg-surface-2 transition-all">
             <Plus size={11} /> Add Position
           </button>
         </div>
         <div className="space-y-4">
           {profile.experience.map((exp, idx) => (
-            <div key={exp.id} className="bg-slate-700/40 border border-slate-600/50 rounded-xl p-4">
+            <div key={exp.id} className="bg-surface-2/40 border border-violet-800/50/50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-slate-300">Position {idx + 1}</span>
@@ -134,12 +134,12 @@ function ExperienceTab() {
                   <label className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wide">End Date</label>
                   <input value={exp.current ? "" : exp.end} onChange={e => updateExperience(exp.id, { end: e.target.value })}
                     disabled={exp.current} placeholder={exp.current ? "Present" : "Dec 2024"}
-                    className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-40 w-full" />
+                    className="bg-surface border border-violet-800/50 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-violet-500 transition-colors disabled:opacity-40 w-full" />
                 </div>
               </div>
               <label className="flex items-center gap-2 mb-3 cursor-pointer select-none"
                 onClick={() => updateExperience(exp.id, { current: !exp.current, end: exp.current ? exp.end : "" })}>
-                <div className={`w-4 h-4 rounded flex items-center justify-center border transition-all ${exp.current ? "bg-indigo-500 border-indigo-500" : "border-slate-500 bg-slate-800"}`}>
+                <div className={`w-4 h-4 rounded flex items-center justify-center border transition-all ${exp.current ? "bg-violet-500 border-violet-500" : "border-slate-500 bg-surface"}`}>
                   {exp.current && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20,6 9,17 4,12" /></svg>}
                 </div>
                 <span className="text-xs text-slate-300">I currently work here</span>
@@ -150,7 +150,7 @@ function ExperienceTab() {
           ))}
         </div>
       </div>
-      <button onClick={addExperience} className="flex items-center gap-1.5 px-4 py-2 border border-slate-600 text-slate-300 hover:bg-slate-700 text-sm font-semibold rounded-lg transition-all w-full justify-center">
+      <button onClick={addExperience} className="flex items-center gap-1.5 px-4 py-2 border border-violet-800/50 text-slate-300 hover:bg-surface-2 text-sm font-semibold rounded-lg transition-all w-full justify-center">
         <Plus size={14} /> Add Another Position
       </button>
     </div>
@@ -173,16 +173,16 @@ function SkillsTab() {
 
   return (
     <div className="space-y-4">
-      <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5">
+      <div className="bg-surface/60 border border-violet-900/50 rounded-xl p-5">
         <div className="text-sm font-bold text-white font-display mb-4 flex items-center gap-2">
-          <span className="text-indigo-400">⚡</span> Technical Skills
+          <span className="text-violet-400">⚡</span> Technical Skills
         </div>
-        <div className="flex flex-wrap gap-1.5 p-2.5 bg-slate-900 border border-slate-700 rounded-lg min-h-[52px] mb-1.5 focus-within:border-indigo-500 transition-colors"
+        <div className="flex flex-wrap gap-1.5 p-2.5 bg-ink-2 border border-violet-900/50 rounded-lg min-h-[52px] mb-1.5 focus-within:border-violet-500 transition-colors"
           onClick={() => document.getElementById("skill-inp")?.focus()}>
           {profile.skills.map(s => (
-            <span key={s} className="inline-flex items-center gap-1 bg-indigo-500/12 text-indigo-300 border border-indigo-500/30 text-xs px-2.5 py-1 rounded-full">
+            <span key={s} className="inline-flex items-center gap-1 bg-violet-500/12 text-violet-300 border border-violet-500/30 text-xs px-2.5 py-1 rounded-full">
               {s}
-              <button onClick={() => removeSkill(s)} className="text-indigo-400/60 hover:text-indigo-300 transition-colors leading-none">×</button>
+              <button onClick={() => removeSkill(s)} className="text-violet-400/60 hover:text-violet-300 transition-colors leading-none">×</button>
             </span>
           ))}
           <input id="skill-inp" value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey}
@@ -193,18 +193,18 @@ function SkillsTab() {
       </div>
 
       {toSuggest.length > 0 && (
-        <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5">
+        <div className="bg-surface/60 border border-violet-900/50 rounded-xl p-5">
           <div className="text-sm font-bold text-white font-display mb-3 flex items-center gap-2">
-            <span className="text-amber-400">💡</span> Suggested for your job targets
+            <span className="text-lime-400">💡</span> Suggested for your job targets
           </div>
           <div className="space-y-2">
             {toSuggest.slice(0, 5).map(s => (
-              <div key={s} className="flex items-center justify-between py-2 px-3 bg-slate-700/40 rounded-lg">
+              <div key={s} className="flex items-center justify-between py-2 px-3 bg-surface-2/40 rounded-lg">
                 <div>
                   <div className="text-xs font-semibold text-white">{s}</div>
                   <div className="text-[10px] text-slate-500 mt-0.5">Appears in 2–4 of your tracked jobs</div>
                 </div>
-                <button onClick={() => addSkill(s)} className="px-2.5 py-1 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold rounded-md transition-all">Add</button>
+                <button onClick={() => addSkill(s)} className="px-2.5 py-1 bg-violet-500 hover:bg-violet-600 text-white text-xs font-semibold rounded-md transition-all">Add</button>
               </div>
             ))}
           </div>
@@ -218,18 +218,18 @@ function ProjectsTab() {
   const { profile, addProject, updateProject, removeProject } = useStore();
   return (
     <div>
-      <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5 mb-3">
+      <div className="bg-surface/60 border border-violet-900/50 rounded-xl p-5 mb-3">
         <div className="flex items-center justify-between mb-4">
           <div className="text-sm font-bold text-white font-display flex items-center gap-2">
-            <span className="text-indigo-400">🖥</span> Projects
+            <span className="text-violet-400">🖥</span> Projects
           </div>
-          <button onClick={addProject} className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700 transition-all">
+          <button onClick={addProject} className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold border border-violet-800/50 text-slate-300 rounded-lg hover:bg-surface-2 transition-all">
             <Plus size={11} /> Add Project
           </button>
         </div>
         <div className="space-y-4">
           {profile.projects.map((proj, idx) => (
-            <div key={proj.id} className="bg-slate-700/40 border border-slate-600/50 rounded-xl p-4">
+            <div key={proj.id} className="bg-surface-2/40 border border-violet-800/50/50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-bold text-slate-300">Project {idx + 1}</span>
                 <button onClick={() => removeProject(proj.id)} className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all">
@@ -280,9 +280,9 @@ function EducationTab() {
 
   return (
     <div className="space-y-4">
-      <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5">
+      <div className="bg-surface/60 border border-violet-900/50 rounded-xl p-5">
         <div className="text-sm font-bold text-white font-display mb-4 flex items-center gap-2">
-          <span className="text-indigo-400">🎓</span> Education
+          <span className="text-violet-400">🎓</span> Education
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-2"><Input label="Degree & Field" value={profile.degree} onChange={v => updateProfile({ degree: v })} placeholder="B.Tech Computer Science" /></div>
@@ -291,12 +291,12 @@ function EducationTab() {
           <Input label="End Year" value={profile.eduEnd} onChange={v => updateProfile({ eduEnd: v })} placeholder="2024" />
         </div>
       </div>
-      <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-5">
+      <div className="bg-surface/60 border border-violet-900/50 rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="text-sm font-bold text-white font-display flex items-center gap-2">
-            <span className="text-indigo-400">🏅</span> Certifications
+            <span className="text-violet-400">🏅</span> Certifications
           </div>
-          <button onClick={addCertification} className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700 transition-all">
+          <button onClick={addCertification} className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold border border-violet-800/50 text-slate-300 rounded-lg hover:bg-surface-2 transition-all">
             <Plus size={11} /> Add
           </button>
         </div>
@@ -307,7 +307,7 @@ function EducationTab() {
         )}
         <div className="space-y-3">
           {profile.certifications.map((cert, idx) => (
-            <div key={cert.id} className="bg-slate-700/40 border border-slate-600/50 rounded-xl p-3">
+            <div key={cert.id} className="bg-surface-2/40 border border-violet-800/50/50 rounded-xl p-3">
               <div className="flex items-center justify-between mb-2.5">
                 <span className="text-xs font-bold text-slate-300">Certification {idx + 1}</span>
                 <button onClick={() => removeCertification(cert.id)} className="p-1 text-slate-500 hover:text-red-400 transition-all"><Trash2 size={12} /></button>
@@ -320,7 +320,7 @@ function EducationTab() {
           ))}
         </div>
       </div>
-      <button onClick={handleSave} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-all">
+      <button onClick={handleSave} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 bg-violet-500 hover:bg-violet-600 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-all">
         {saving ? <><Loader2 size={14} className="animate-spin"/>Saving…</> : <><CheckSquare size={14}/> Save & Sync</>}
       </button>
     </div>
@@ -369,11 +369,11 @@ function PreviewExportTab() {
   const summaryPct      = p.summary.length > 100 ? 100 : Math.round((p.summary.length / 100) * 100);
 
   const readiness = [
-    { label: "Contact completeness", pct: contactPct, color: contactPct === 100 ? "bg-emerald-500" : "bg-amber-500", status: `${contactFields}/4 fields`, statusColor: contactPct === 100 ? "text-emerald-400" : "text-amber-400" },
-    { label: "Skills listed",        pct: skillsPct,  color: skillsPct  >= 70  ? "bg-emerald-500" : "bg-amber-500", status: `${p.skills.length} skills`,  statusColor: skillsPct  >= 70  ? "text-emerald-400" : "text-amber-400" },
-    { label: "Action verbs",         pct: actionPct,  color: actionPct  >= 60  ? "bg-emerald-500" : "bg-amber-500", status: `${actionPct}% of bullets`,  statusColor: actionPct  >= 60  ? "text-emerald-400" : "text-amber-400" },
-    { label: "Quantified results",   pct: quantPct,   color: quantPct   >= 50  ? "bg-emerald-500" : "bg-amber-500", status: `${quantPct}% of bullets`,   statusColor: quantPct   >= 50  ? "text-emerald-400" : "text-amber-400" },
-    { label: "Summary written",      pct: summaryPct, color: summaryPct === 100 ? "bg-emerald-500" : "bg-amber-500", status: summaryPct === 100 ? "Complete" : "Too short", statusColor: summaryPct === 100 ? "text-emerald-400" : "text-amber-400" },
+    { label: "Contact completeness", pct: contactPct, color: contactPct === 100 ? "bg-emerald-500" : "bg-lime-500", status: `${contactFields}/4 fields`, statusColor: contactPct === 100 ? "text-emerald-400" : "text-lime-400" },
+    { label: "Skills listed",        pct: skillsPct,  color: skillsPct  >= 70  ? "bg-emerald-500" : "bg-lime-500", status: `${p.skills.length} skills`,  statusColor: skillsPct  >= 70  ? "text-emerald-400" : "text-lime-400" },
+    { label: "Action verbs",         pct: actionPct,  color: actionPct  >= 60  ? "bg-emerald-500" : "bg-lime-500", status: `${actionPct}% of bullets`,  statusColor: actionPct  >= 60  ? "text-emerald-400" : "text-lime-400" },
+    { label: "Quantified results",   pct: quantPct,   color: quantPct   >= 50  ? "bg-emerald-500" : "bg-lime-500", status: `${quantPct}% of bullets`,   statusColor: quantPct   >= 50  ? "text-emerald-400" : "text-lime-400" },
+    { label: "Summary written",      pct: summaryPct, color: summaryPct === 100 ? "bg-emerald-500" : "bg-lime-500", status: summaryPct === 100 ? "Complete" : "Too short", statusColor: summaryPct === 100 ? "text-emerald-400" : "text-lime-400" },
   ];
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-5">
@@ -381,7 +381,7 @@ function PreviewExportTab() {
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <TemplateSwitch />
           <div className="ml-auto flex gap-2">
-            <button onClick={() => showToast("Link copied!", "ok")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700 transition-all">
+            <button onClick={() => showToast("Link copied!", "ok")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold border border-violet-800/50 text-slate-300 rounded-lg hover:bg-surface-2 transition-all">
               <Link size={11} /> Share
             </button>
             <button
@@ -393,14 +393,14 @@ function PreviewExportTab() {
             </button>
           </div>
         </div>
-        <div className="bg-slate-900 rounded-xl p-4">
+        <div className="bg-ink-2 rounded-xl p-4">
           <div style={{ transform: "scale(0.75)", transformOrigin: "top center", width: "133%", marginLeft: "-16.5%" }}>
             <ResumeRenderer />
           </div>
         </div>
       </div>
       <div className="space-y-4">
-        <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-4">
+        <div className="bg-surface/60 border border-violet-900/50 rounded-xl p-4">
           <div className="text-xs font-bold text-white font-display mb-3 flex items-center gap-1.5">📊 ATS Readiness</div>
           <div className="space-y-2.5">
             {readiness.map(r => (
@@ -409,20 +409,20 @@ function PreviewExportTab() {
                   <span className="text-slate-400">{r.label}</span>
                   <span className={`font-bold ${r.statusColor}`}>{r.status}</span>
                 </div>
-                <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                <div className="h-1 bg-surface-2 rounded-full overflow-hidden">
                   <div className={`h-full ${r.color} rounded-full`} style={{ width: `${r.pct}%` }} />
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-4">
+        <div className="bg-surface/60 border border-violet-900/50 rounded-xl p-4">
           <div className="text-xs font-bold text-white font-display mb-3">💡 Quick Improvements</div>
           <div className="space-y-2 text-xs">
-            {contactPct < 100 && <div className="p-2.5 bg-amber-500/8 border border-amber-500/20 rounded-lg text-amber-200 leading-relaxed">Add your LinkedIn and phone number to complete your contact info.</div>}
-            {p.certifications.length === 0 && <div className="p-2.5 bg-amber-500/8 border border-amber-500/20 rounded-lg text-amber-200 leading-relaxed">Add certifications (AWS, Docker, GCP) to boost ATS scores on specialized roles.</div>}
-            {actionPct < 60 && <div className="p-2.5 bg-indigo-500/8 border border-indigo-500/20 rounded-lg text-indigo-200 leading-relaxed">Start more bullet points with action verbs like Built, Led, Improved, Delivered.</div>}
-            {quantPct < 50 && <div className="p-2.5 bg-indigo-500/8 border border-indigo-500/20 rounded-lg text-indigo-200 leading-relaxed">Add numbers to your bullets — e.g. "reduced latency by 40%" or "led a team of 5".</div>}
+            {contactPct < 100 && <div className="p-2.5 bg-lime-500/8 border border-lime-500/20 rounded-lg text-lime-200 leading-relaxed">Add your LinkedIn and phone number to complete your contact info.</div>}
+            {p.certifications.length === 0 && <div className="p-2.5 bg-lime-500/8 border border-lime-500/20 rounded-lg text-lime-200 leading-relaxed">Add certifications (AWS, Docker, GCP) to boost ATS scores on specialized roles.</div>}
+            {actionPct < 60 && <div className="p-2.5 bg-violet-500/8 border border-violet-500/20 rounded-lg text-violet-200 leading-relaxed">Start more bullet points with action verbs like Built, Led, Improved, Delivered.</div>}
+            {quantPct < 50 && <div className="p-2.5 bg-violet-500/8 border border-violet-500/20 rounded-lg text-violet-200 leading-relaxed">Add numbers to your bullets — e.g. "reduced latency by 40%" or "led a team of 5".</div>}
             {p.skills.length < 5 && <div className="p-2.5 bg-red-500/8 border border-red-500/20 rounded-lg text-red-200 leading-relaxed">Add at least 8–10 skills to the Skills tab to improve ATS keyword matching.</div>}
             {contactPct === 100 && p.certifications.length > 0 && actionPct >= 60 && quantPct >= 50 && p.skills.length >= 5 && (
               <div className="p-2.5 bg-emerald-500/8 border border-emerald-500/20 rounded-lg text-emerald-200 leading-relaxed">✓ Great profile! Run an analysis to see how it matches your target jobs.</div>
@@ -441,10 +441,10 @@ export default function BuilderPage() {
   return (
     <div className="max-w-6xl">
       {/* Tabs */}
-      <div className="flex border-b border-slate-700/60 mb-5 overflow-x-auto">
+      <div className="flex border-b border-violet-900/60 mb-5 overflow-x-auto">
         {TABS.map((t, i) => (
           <button key={t} onClick={() => setTab(i)}
-            className={`px-4 py-2.5 text-xs font-bold whitespace-nowrap border-b-2 transition-all font-display ${tab === i ? "text-indigo-400 border-indigo-500" : "text-slate-500 border-transparent hover:text-slate-300"}`}>
+            className={`px-4 py-2.5 text-xs font-bold whitespace-nowrap border-b-2 transition-all font-display ${tab === i ? "text-violet-400 border-violet-500" : "text-slate-500 border-transparent hover:text-slate-300"}`}>
             {t}
           </button>
         ))}

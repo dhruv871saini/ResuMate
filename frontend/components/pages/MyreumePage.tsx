@@ -19,9 +19,9 @@ interface SavedResume {
 }
 
 const TEMPLATE_COLORS: Record<string, string> = {
-  classic:   "bg-slate-700/60 text-slate-300 border-slate-600",
-  modern:    "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
-  minimal:   "bg-slate-700/40 text-slate-400 border-slate-600",
+  classic:   "bg-surface-2/60 text-slate-300 border-violet-800/50",
+  modern:    "bg-green-500/10 text-green-400 border-green-500/20",
+  minimal:   "bg-surface-2/40 text-slate-400 border-violet-800/50",
   executive: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
 };
 
@@ -74,7 +74,7 @@ export default function MyResumesPage({ goTo }: { goTo: NavigateFn }) {
 
   const scoreBg = (s: number) =>
     s >= 70 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-    : s >= 50 ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+    : s >= 50 ? "bg-lime-500/10 text-lime-400 border-lime-500/20"
     : "bg-red-500/10 text-red-400 border-red-500/20";
 
   return (
@@ -93,7 +93,7 @@ export default function MyResumesPage({ goTo }: { goTo: NavigateFn }) {
           <select
             value={selectedTemplate}
             onChange={e => setSelectedTemplate(e.target.value)}
-            className="bg-slate-800 border border-slate-600 text-slate-300 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500"
+            className="bg-surface border border-violet-800/50 text-slate-300 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-green-500"
           >
             <option value="classic">Classic</option>
             <option value="modern">Modern</option>
@@ -106,12 +106,12 @@ export default function MyResumesPage({ goTo }: { goTo: NavigateFn }) {
       {/* Saved PDFs */}
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <Loader2 size={22} className="text-indigo-400 animate-spin" />
+          <Loader2 size={22} className="text-green-400 animate-spin" />
         </div>
       ) : resumes.length === 0 && ungenerated.length === 0 ? (
         /* Empty state — no analyses at all */
         <div className="text-center py-16">
-          <div className="w-14 h-14 bg-slate-800 border border-slate-700 rounded-2xl flex items-center justify-center text-slate-500 mx-auto mb-4">
+          <div className="w-14 h-14 bg-surface border border-violet-900/50 rounded-2xl flex items-center justify-center text-slate-500 mx-auto mb-4">
             <FileText size={24} />
           </div>
           <div className="text-sm font-semibold text-slate-400 mb-2">No resumes yet</div>
@@ -120,7 +120,7 @@ export default function MyResumesPage({ goTo }: { goTo: NavigateFn }) {
           </p>
           <button
             onClick={() => goTo("analyzer")}
-            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg transition-all mx-auto"
+            className="flex items-center gap-1.5 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-lg transition-all mx-auto"
           >
             <Zap size={12} /> Go to Analyzer
           </button>
@@ -138,11 +138,11 @@ export default function MyResumesPage({ goTo }: { goTo: NavigateFn }) {
                 {resumes.map(r => (
                   <div
                     key={`${r.id}-${r.pdf_created_at}`}
-                    className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-4"
+                    className="bg-surface/60 border border-violet-900/50 rounded-xl p-4"
                   >
                     {/* Card header */}
                     <div className="flex items-start gap-3 mb-3">
-                      <div className="w-9 h-9 rounded-lg bg-indigo-500 flex items-center justify-center text-xs font-bold text-white font-display shrink-0">
+                      <div className="w-9 h-9 rounded-lg bg-green-500 flex items-center justify-center text-xs font-bold text-white font-display shrink-0">
                         {r.company[0]?.toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -180,7 +180,7 @@ export default function MyResumesPage({ goTo }: { goTo: NavigateFn }) {
                         href={r.pdf_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-1.5 text-slate-400 hover:text-slate-200 border border-slate-600 hover:border-slate-500 rounded-lg transition-all"
+                        className="p-1.5 text-slate-400 hover:text-slate-200 border border-violet-800/50 hover:border-slate-500 rounded-lg transition-all"
                       >
                         <ExternalLink size={13} />
                       </a>
@@ -204,10 +204,10 @@ export default function MyResumesPage({ goTo }: { goTo: NavigateFn }) {
                   return (
                     <div
                       key={a.id}
-                      className="bg-slate-800/40 border border-dashed border-slate-700 rounded-xl p-4"
+                      className="bg-surface/40 border border-dashed border-violet-900/50 rounded-xl p-4"
                     >
                       <div className="flex items-start gap-3 mb-3">
-                        <div className="w-9 h-9 rounded-lg bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 font-display shrink-0">
+                        <div className="w-9 h-9 rounded-lg bg-surface-2 flex items-center justify-center text-xs font-bold text-slate-300 font-display shrink-0">
                           {job?.company[0]?.toUpperCase() || "?"}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -225,7 +225,7 @@ export default function MyResumesPage({ goTo }: { goTo: NavigateFn }) {
                       <button
                         onClick={() => generate(a.id)}
                         disabled={isGen || !!generatingId}
-                        className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60 text-white rounded-lg transition-all"
+                        className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold bg-green-500 hover:bg-green-600 disabled:opacity-60 text-white rounded-lg transition-all"
                       >
                         {isGen
                           ? <><Loader2 size={11} className="animate-spin" /> Generating…</>

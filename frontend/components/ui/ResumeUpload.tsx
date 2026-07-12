@@ -134,10 +134,10 @@ export default function ResumeUpload() {
         }}
         onClick={() => !isLoading && inputRef.current?.click()}
         className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer select-none
-          ${dragging       ? "border-indigo-400 bg-indigo-500/10"
+          ${dragging       ? "border-violet-400 bg-violet-500/10"
           : status === "done"  ? "border-emerald-500/50 bg-emerald-500/5 cursor-default"
           : status === "error" ? "border-red-500/50 bg-red-500/5"
-          : "border-slate-600 hover:border-indigo-500/50 hover:bg-slate-800/50"}`}
+          : "border-violet-800/50 hover:border-violet-500/50 hover:bg-surface/50"}`}
       >
         <input
           ref={inputRef} type="file" accept=".pdf,.docx" className="hidden"
@@ -148,7 +148,7 @@ export default function ResumeUpload() {
         {(status === "done" || status === "error") && (
           <button
             onClick={(e) => { e.stopPropagation(); reset(); }}
-            className="absolute top-2.5 right-2.5 p-1 text-slate-500 hover:text-slate-300 rounded-md hover:bg-slate-700 transition-all"
+            className="absolute top-2.5 right-2.5 p-1 text-slate-500 hover:text-slate-300 rounded-md hover:bg-surface-2 transition-all"
           >
             <X size={14} />
           </button>
@@ -156,8 +156,8 @@ export default function ResumeUpload() {
 
         {isLoading && (
           <div className="flex flex-col items-center gap-2.5">
-            <Loader2 size={26} className="text-indigo-400 animate-spin" />
-            <div className="text-sm font-semibold text-indigo-300">
+            <Loader2 size={26} className="text-violet-400 animate-spin" />
+            <div className="text-sm font-semibold text-violet-300">
               {status === "uploading" ? "Uploading to Cloudinary…" : "AI is parsing your resume…"}
             </div>
             <div className="text-xs text-slate-500">{fileName}</div>
@@ -174,7 +174,7 @@ export default function ResumeUpload() {
               <a
                 href={uploadedFileUrl} target="_blank" rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="text-[10.5px] text-indigo-400 hover:underline mt-0.5"
+                className="text-[10.5px] text-violet-400 hover:underline mt-0.5"
               >
                 View on Cloudinary ↗
               </a>
@@ -193,7 +193,7 @@ export default function ResumeUpload() {
 
         {status === "idle" && (
           <div className="flex flex-col items-center gap-2.5">
-            <div className="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div className="w-11 h-11 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400">
               <Upload size={20} />
             </div>
             <div>
@@ -222,9 +222,9 @@ export default function ResumeUpload() {
 
       {/* Divider */}
       <div className="flex items-center gap-2 mt-3">
-        <div className="h-px flex-1 bg-slate-700/50" />
+        <div className="h-px flex-1 bg-surface-2/50" />
         <span className="text-[10.5px] text-slate-500">or fill in manually below</span>
-        <div className="h-px flex-1 bg-slate-700/50" />
+        <div className="h-px flex-1 bg-surface-2/50" />
       </div>
     </div>
   );
