@@ -60,7 +60,7 @@ export default function LandingPage() {
           Most resumes are filtered out before a recruiter reads them. Resumate helps you beat ATS scanners, score your match, and get the interview.
         </p>
         <div className="flex gap-3 flex-wrap justify-center">
-          <button onClick={() => setAuthModal("signup")} className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 via-fuchsia-500 to-emerald-400 hover:opacity-90 text-white font-semibold rounded-xl transition-all shadow-lg shadow-fuchsia-500/25 text-sm">
+          <button onClick={() => setAuthModal("signup")} className="flex items-center gap-2 px-6 py-3 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-semibold rounded-xl transition-all shadow-lg shadow-fuchsia-500/25 text-sm">
             <FileText size={15} /> Build my resume — it&apos;s free
           </button>
           <button onClick={() => setAuthModal("login")} className="flex items-center gap-2 px-6 py-3 bg-fuchsia-500/10 hover:bg-fuchsia-500/15 text-slate-200 font-semibold rounded-xl border border-violet-800/40 transition-all text-sm">
@@ -144,7 +144,7 @@ export default function LandingPage() {
       <section className="py-24 px-8 text-center">
         <h2 className="font-display font-extrabold text-4xl md:text-5xl text-white tracking-tight mb-4">Your next interview<br/>is one resume away</h2>
         <p className="text-slate-400 text-lg mb-8 max-w-md mx-auto leading-relaxed">Stop guessing why you&apos;re not getting called back. Resumate tells you exactly what to fix.</p>
-        <button onClick={() => setAuthModal("signup")} className="px-8 py-3.5 bg-gradient-to-r from-red-500 via-fuchsia-500 to-lime-400 hover:opacity-90 text-white font-bold rounded-xl transition-all shadow-xl shadow-fuchsia-500/20 text-base">
+        <button onClick={() => setAuthModal("signup")} className="px-8 py-3.5 bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-bold rounded-xl transition-all shadow-xl shadow-fuchsia-500/20 text-base">
           Create your resume — free
         </button>
       </section>

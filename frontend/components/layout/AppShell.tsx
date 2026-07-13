@@ -72,7 +72,7 @@ export default function AppShell() {
           <div className="text-[9.5px] font-bold text-slate-500 uppercase tracking-widest px-2.5 py-2 font-display">Workspace</div>
           {NAV.map(({ id, label, icon: Icon, badge }) => (
             <button key={id} onClick={() => setPage(id)}
-              className={`flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all mb-0.5 ${page === id ? "bg-gradient-to-r from-red-500 via-fuchsia-500 to-emerald-400 text-white" : "text-slate-400 hover:bg-surface hover:text-slate-100"}`}>
+              className={`flex items-center gap-2 w-full px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all mb-0.5 ${page === id ? "bg-fuchsia-500 text-white" : "text-slate-400 hover:bg-surface hover:text-slate-100"}`}>
               <Icon size={15} className="shrink-0" />
               <span className="flex-1 text-left">{label}</span>
               {badge && <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${page === id ? "bg-white/20 text-white" : "bg-fuchsia-500/20 text-lime-300"}`}>{badge}</span>}
@@ -110,7 +110,7 @@ export default function AppShell() {
             <button onClick={() => setPage("jobs")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-100 border border-lime-400/40 bg-fuchsia-500/10 rounded-lg hover:bg-fuchsia-500/20 transition-all">
               <Plus size={12} /> Add Job
             </button>
-            <button onClick={() => setPage("builder")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-fuchsia-500 via-violet-500 to-emerald-500 hover:opacity-90 text-white rounded-lg transition-all">
+            <button onClick={() => setPage("builder")} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-fuchsia-500 hover:bg-fuchsia-600 text-white rounded-lg transition-all">
               <PenLine size={12} /> Edit Resume
             </button>
           </div>
